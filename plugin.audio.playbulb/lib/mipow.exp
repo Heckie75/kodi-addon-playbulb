@@ -1,0 +1,1761 @@
+#!/usr/bin/expect
+#
+# Shell script in order to control Mipow Playbulb BTL201
+#
+# Note: requires package Tclx
+#
+# Version: 2017-03-19
+#
+# MIT License
+#
+# Copyright (c) 2017 heckie75
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+# THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+# sets output to stdout and debug
+log_user 0
+
+set HELP(usage) "Usage: <mac/alias> <command> <parameters...>\n\
+ \                                  <mac>: bluetooth mac address of bulb\n\
+ \                                  <alias>: you can use alias instead of mac address \n\
+ \                                           after you have run setup (see setup) \n\
+ \                                  <command>: For command and parameters"
+set HELP(turnon) "\
+  on                              - turn on light (white)"
+set HELP(turnoff) "\
+  off                             - turn off light"
+set HELP(toggle) "\
+  toggle                          - turn off / on (remembers color!)"
+set HELP(turnup) "\
+  up                              - turn up light"
+set HELP(dim) "\
+  down                            - dim light"
+set HELP(color) "\
+  color <white> <red> <green> <blue> \n\
+ \                                - set color, each value 0 - 255"
+set HELP(animate) "\
+  animate <hold> <white> <red> <green> <blue> \n\
+ \                                - change color smoothly based \n\
+ \                                  <hold>: 0 - 255ms \n\
+ \                                  color-values: 0 - 255"
+set HELP(triangle) "\
+  triangle <hold> <delay> <max>   - change colors \n\
+ \                                  <hold> in ms \n\
+ \                                  <delay> in ms \n\
+ \                                          0 means no animation \n\
+ \                                          < 0 means dark pause"
+set HELP(stop) "\
+  stop                            - stop soft-effect"
+set HELP(pulse) "\
+  pulse <hold> <white> <red> <green> <blue> \n\
+ \                                - run build-in pulse effect \n\
+ \                                  <hold>: 0 - 255ms per step \n\
+ \                                  color values: 0=off, 1=on"
+set HELP(blink) "\
+  blink <hold> <white> <red> <green> <blue> \n\
+ \                                - run build-in blink effect \n\
+ \                                  <hold>: 0 - 255ms per step \n\
+ \                                  color values: 0 - 255"
+set HELP(rainbow) "\
+  rainbow <hold>                  - run build-in rainbow effect \n\
+ \                                  <hold>: 0 - 255ms per step"
+set HELP(candle) "\
+  candle <hold> <white> <red> <green> <blue> \n\
+ \                                - run build-in candle effect \n\
+ \                                  <hold>: 0 - 255ms per step \n\
+ \                                  color values: 0 - 255"
+set HELP(disco) "\
+  disco <hold>                    - run build-in disco effect \n\
+ \                                  <hold>: 0 - 255 in 1/100s"
+set HELP(hold) "\
+  hold <hold>                     - change hold value of current effect"
+set HELP(halt) "\
+  halt                            - halt build-in effect, keeps color"
+set HELP(timer) "\
+  timer <timer> <start> <minutes> \[<white> <red> <green> <blue>\]\n\
+ \                                - schedules timer \n\
+ \                                  <timer>: No. of timer 1 - 4 \n\
+ \                                  <start>: starting time \n\
+ \                                           (hh:mm or in minutes) \n\
+ \                                  <minutes>: runtime in minutes \n\
+ \                                  color values: 0 - 255 \n\
+ timer <timer> off               - deactivates single timer \n\
+ \                                  <timer>: No. of timer 1 - 4 \n\
+ timer off                       - deactivates all timers"
+set HELP(fade) "\
+  fade <minutes> <white> <red> <green> <blue> \n\
+ \                                - change color smoothly \n\
+ \                                  <minutes>: runtime in minutes \n\
+ \                                  color values: 0 - 255"
+set HELP(ambient) "\
+  ambient <minutes> \[<start>\]     - schedules ambient program \n\
+ \                                  <minutes>: runtime in minutes \n\
+ \                                             best in steps of 15m \n\
+ \                                  <start>: starting time (optional)\n\
+ \                                           (hh:mm or in minutes)"
+set HELP(wakeup) "\
+  wakeup <minutes> \[<start>\]      - schedules wake-up program \n\
+ \                                  <minutes>: runtime in minutes \n\
+ \                                             best in steps of 15m \n\
+ \                                  <start>: starting time (optional)\n\
+ \                                           (hh:mm or in minutes)"
+set HELP(doze) "\
+  doze <minutes> \[<start>\]        - schedules doze program \n\
+ \                                  <minutes>: runtime in minutes \n\
+ \                                             best in steps of 15m \n\
+ \                                  <start>: starting time (optional)\n\
+ \                                           (hh:mm or in minutes)"
+set HELP(bgr) "\
+ bgr <minutes> \[<start>\] \[<brightness>\] \n\
+\                                - schedules blue-green-red program \n\
+\                                  <minutes>: runtime in minutes \n\
+\                                             best in steps of 4m, up to 1020m \n\
+\                                  <start>: starting time (optional)\n\
+\                                           (hh:mm or in minutes)\n\
+\                                  <brightness>: 0 - 255 (default: 255)"
+set HELP(random) "\
+  random <start> <stop> <min> <max> \[<white> <red> <green> <blue>\]\n\
+ \                                - schedules random mode\n\
+ \                                  <start>: start time \n\
+ \                                           (hh:mm or in minutes) \n\
+ \                                  <stop>: stop time \n\
+ \                                          (hh:mm or in minutes) \n\
+ \                                  <min>: min runtime in minutes \n\
+ \                                  <max>: max runtime in minutes \n\
+ \                                  color values: 0 - 255 \n\n\
+ random off                      - stop random mode"
+set HELP(status) "\
+  status                          - print main information of bulb"
+set HELP(help) "\
+  help <command>                  - get help for specific command"
+set HELP(dump) "\
+  dump                            - dump full state of bulb"
+set HELP(json) "\
+  json                            - dump full state of bulb in json format"
+set HELP(name) "\
+  name <name>                     - give bulb a new displayname / alias"
+set HELP(password) "\
+  password <abcd>                 - set password"
+set HELP(reset) "\
+  reset                           - perform factory reset"
+set HELP(setup) "\
+  setup                           - setup bulb for this program"
+
+set pidfile                  ""
+set hndfile                  ""
+set cmdfile                  ""
+
+set mac                      ""
+set cmd                      ""
+
+set timeout                  2
+
+set DELAY                    100
+
+set INIT(color)              1
+set INIT(effect)             2
+set INIT(timers)             4
+set INIT(device)             8
+
+set CHARACTERISTIC(2a25)     "devid"
+set CHARACTERISTIC(2a26)     "devversion"
+set CHARACTERISTIC(2a29)     "devvendor"
+set CHARACTERISTIC(2a28)     "devsoftware"
+set CHARACTERISTIC(2a27)     "devcpu"
+set CHARACTERISTIC(ffff)     "devname"
+set CHARACTERISTIC(fffd)     "reset"
+set CHARACTERISTIC(fffc)     "color"
+set CHARACTERISTIC(fffb)     "effect"
+set CHARACTERISTIC(fffe)     "timersettings"
+set CHARACTERISTIC(fff7)     "devpassword"
+set CHARACTERISTIC(fff8)     "timereffects"
+set CHARACTERISTIC(fff9)     "randommode"
+
+set MAC_PATTERN              "\[0-9A-F]{2}:\[0-9A-F]{2}:\[0-9A-F]{2}:\[0-9A-F]{2}:\[0-9A-F]{2}:\[0-9A-F]{2}"
+set KNOWN_BULBS_FILE         "~/.known_bulbs"
+array set HANDLES            {}
+set BASIC_HANDLES            8
+
+
+array set knownBulbs         {}
+
+set COLORS(white)            "ff000000"
+set COLORS(red)              "00ff0000"
+set COLORS(green)            "0000ff00"
+set COLORS(blue)             "000000ff"
+set COLORS(yellow)           "00ffff00"
+set COLORS(magenta)          "00ff00ff"
+set COLORS(cyan)             "0000ffff"
+
+set EFFECTS(blink)           "00"
+set EFFECTS(pulse)           "01"
+set EFFECTS(disco)           "02"
+set EFFECTS(rainbow)         "03"
+set EFFECTS(candle)          "04"
+set EFFECTS(halt)            "ff"
+
+set TIMER_EFFECTS(off)       "04"
+set TIMER_EFFECTS(turnon)    "00"
+set TIMER_EFFECTS(turnoff)   "02"
+
+set bulb(name)               "00000000000000000000000000000000"
+set bulb(mac)                ""
+set bulb(devid)              ""
+set bulb(devversion)         ""
+set bulb(devvendor)          ""
+set bulb(devsoftware)        ""
+set bulb(devcpu)             ""
+set bulb(devname)            ""
+set bulb(devpassword)        "0000"
+set bulb(color)              "00000000"
+set bulb(color_white)        "00"
+set bulb(color_red)          "00"
+set bulb(color_green)        "00"
+set bulb(color_blue)         "00"
+set bulb(effect)             "00000000ff00ff00"
+set bulb(effect_color)       "00000000"
+set bulb(effect_effect)      "ff"
+set bulb(effect_hold)        "ff"
+set bulb(randommode)         "000000ffffffffffff00000000"
+set bulb(randommode_status)  "00"
+set bulb(randommode_start)   "ffff"
+set bulb(randommode_stop)    "ffff"
+set bulb(randommode_min)     "ff"
+set bulb(randommode_max)     "ff"
+set bulb(randommode_color)   "00000000"
+set bulb(timer)              "04ffff04ffff04ffff04ffff0000"
+set bulb(time)               "0000"
+set bulb(timer_0)            "04ffff"
+set bulb(timer_type_0)       "04"
+set bulb(timer_time_0)       "ffff"
+set bulb(timer_1)            "04ffff"
+set bulb(timer_type_1)       "04"
+set bulb(timer_time_1)       "ffff"
+set bulb(timer_2)            "04ffff"
+set bulb(timer_type_2)       "04"
+set bulb(timer_time_2)       "ffff"
+set bulb(timer_3)            "04ffff"
+set bulb(timer_type_3)       "04"
+set bulb(timer_time_3)       "ffff"
+set bulb(timer_effect)       "000000000000000000000000000000000000000"
+set bulb(timer_effect_0)     "0000000000"
+set bulb(timer_effect_color_0)     "00000000"
+set bulb(timer_effect_hold_0)     "00"
+set bulb(timer_effect_1)     "0000000000"
+set bulb(timer_effect_color_1)     "00000000"
+set bulb(timer_effect_hold_1)     "00"
+set bulb(timer_effect_2)     "0000000000"
+set bulb(timer_effect_color_2)     "00000000"
+set bulb(timer_effect_hold_2)     "00"
+set bulb(timer_effect_3)     "0000000000"
+set bulb(timer_effect_color_3)     "00000000"
+set bulb(timer_effect_hold_4)     "00"
+
+set bulb(prev_color)         "ff000000"
+set bulb(prev_effect)        "ff000000ff00ff00"
+
+# reads process ID from file if other process is running
+proc readPid {} {
+  global pidfile
+
+  if {[file exists $pidfile] == 0} {
+    return ""
+  }
+
+  set fp [open $pidfile r]
+  fconfigure $fp -buffering line
+  gets $fp data
+  close $fp
+  return $data
+}
+
+# cuts first string element in s
+proc lshift {s} {
+  set r ""
+  for {set i 1} {$i < [llength $s]} {incr i} {
+    if {$i > 1} {
+      append r " "
+    }
+    append r [lindex $s $i]
+  }
+  return $r
+}
+
+# logs output to file with process ID
+proc log {l} {
+  global pidfile
+
+  if {[log_user] != 0} {
+    puts $l
+  }
+
+  set fp [open $pidfile a]
+  puts $fp $l
+  close $fp
+}
+
+# queues command in command file for interaction between processes
+proc sendCmd {cmd} {
+  global cmdfile
+
+  if {[file exists $cmdfile] != 0} {
+    file delete $cmdfile
+  }
+
+  set fp [open $cmdfile w]
+  puts $fp $cmd
+  puts $fp "\n"
+  close $fp
+}
+
+# reads command from command file for interaction between processes
+proc readCmd {} {
+  global cmdfile
+
+  if {[file exists $cmdfile] == 0} {
+    return ""
+  }
+
+  set fp [open $cmdfile r]
+  fconfigure $fp -buffering line
+  gets $fp cmd
+  close $fp
+
+  file delete $cmdfile
+
+  return $cmd
+}
+
+# initialises file with process id
+proc start {} {
+  global pidfile
+  global cmdfile
+  global mac
+
+  set fp [open $pidfile w]
+  puts $fp [pid]
+  close $fp
+}
+
+# deletes temp files, i.e. command and process file
+proc cleanup {} {
+  global pidfile
+  global cmdfile
+
+  file delete -force $cmdfile
+  file delete -force $pidfile
+}
+
+# stops other running bulb process
+proc stop {} {
+  global pidfile
+  global cmdfile
+  global mac
+
+  set runPid [readPid]
+  set i 0
+
+  while {$runPid != "" && $runPid != [pid] && $i < 5} {
+    incr i
+    puts "stop: Try to stop other bulb <$mac> with pid <$runPid> ... $i"
+
+    sendCmd "stop"
+
+    after 1000
+    set runPid [readPid]
+  }
+
+  if {$i == 5} {
+# TODO kill
+  }
+}
+
+# prints help output
+proc help {argv} {
+  global HELP
+
+  # print help for given command
+  if {[llength $argv] == 2 && [lindex $argv 0] == "help"} {
+    set command [lindex $argv 1]
+    puts $HELP(usage)
+
+    if {[info exists HELP($command)] == 1} {
+      puts "\n$HELP($command)\n"
+    } else {
+      puts "\nUnknown command <$command>.\n"
+    }
+    cleanup
+    exit 1
+  } elseif {[llength $argv] < 1 || [lindex $argv 0] == "help"} {
+    puts "$HELP(usage)\n"
+    puts "\nBasic commands:\n"
+    puts "$HELP(status)"
+    puts "$HELP(turnon)"
+    puts "$HELP(turnoff)"
+    puts "$HELP(toggle)"
+    puts "$HELP(color)"
+    puts "$HELP(turnup)"
+    puts "$HELP(dim)\n"
+    puts "\nBuild-in effects:\n"
+    puts "$HELP(pulse)"
+    puts "$HELP(blink)"
+    puts "$HELP(rainbow)"
+    puts "$HELP(candle)"
+    puts "$HELP(disco)"
+    puts "$HELP(hold)"
+    puts "$HELP(halt)\n"
+    puts "\nSoft-effects which stay connected and run long:\n"
+    puts "$HELP(animate)"
+    puts "$HELP(triangle)"
+    puts "$HELP(stop)\n"
+    puts "\nTimer commands:\n"
+    puts "$HELP(timer)"
+    puts "$HELP(fade)"
+    puts "$HELP(ambient)"
+    puts "$HELP(wakeup)"
+    puts "$HELP(doze)"
+    puts "$HELP(bgr)"
+    puts "$HELP(random)\n"
+    puts "\nOther commands:\n"
+    puts "$HELP(help)"
+    puts "$HELP(setup)"
+    puts "$HELP(name)"
+    puts "$HELP(password)"
+    puts "$HELP(dump)"
+    puts "$HELP(json)"
+    puts "$HELP(reset)"
+    puts ""
+    cleanup
+    exit 1
+  }
+}
+
+# prepare bulb
+proc prepareBulb {id} {
+  global MAC_PATTERN
+  global mac
+  global pidfile
+  global cmdfile
+  global hndfile
+
+  set is_mac [regexp "$MAC_PATTERN" $id]
+
+  if {$is_mac == 1 } {
+    set mac $id
+  } else {
+    readKnownBulbs
+    lookupKnownBulbByName $id
+  } 
+
+  if { $mac == "" } {
+    puts "Bulb \"$id\" currently not known. Run setup before using alias."
+    checkArgs "setup" 2 "setup" {^setup$}
+  }
+
+  set _mac [regsub -all {[\:]+} $mac {-}]
+  append pidfile "/tmp/bulb-" $_mac ".pid"
+  append cmdfile "/tmp/bulb-" $_mac ".cmd"
+  append hndfile "/tmp/bulb-" $_mac ".hnd"
+}
+
+proc checkArgs {argv req command reg} {
+  global HELP
+  set check [regexp $reg [concat $argv]]
+  if {[llength $argv] <= $req || $check == 0} {
+    help "help $command"
+  }
+}
+
+proc connect {} {
+  global bulb
+  global mac
+
+  expect "\[LE\]"
+  send "connect $mac\r"
+  expect "Connection successful" {
+    set bulb(mac) $mac
+    return 0
+  }
+  return 1
+}
+
+proc disconnect {} {
+  global DELAY
+  send "disconnect\r"
+  after $DELAY
+}
+
+proc init {level} {
+  global INIT
+
+  initHandles
+
+  set connected [connect]
+
+  if { $connected == 0} {
+    if {$level & $INIT(device)} {
+      readDeviceInfo
+    }
+    if {$level & $INIT(color)} {
+      readColor
+    }
+    if {$level & $INIT(effect)} {
+      readEffect
+    }
+    if {$level & $INIT(timers)} {
+      readTimers
+      readRandomMode
+    }
+  } else {
+    puts "Connection failed."
+    cleanup
+    exit -1
+  }
+  return $connected
+}
+
+proc initHandles {} {
+  global HANDLES
+  global BASIC_HANDLES
+  global CHARACTERISTIC
+  global HELP
+  global hndfile
+
+  if {[file exists $hndfile] == 0 || [file size $hndfile] == 0} {
+    setupCharacteristics
+  }
+
+  set fp [open $hndfile r]
+  fconfigure $fp -buffering line
+
+  gets $fp data
+  while {$data != ""} {
+    regexp "char value handle = 0x\(\[0-9a-fA-F]+), uuid = \[0]+(\[0-9a-fA-F]+)" $data matched handle uuid
+
+    if { ! [info exists CHARACTERISTIC($uuid)] } {
+      gets $fp data
+      continue
+    }
+
+    set HANDLES($CHARACTERISTIC($uuid)) $handle
+    gets $fp data
+  }
+
+  close $fp
+
+  if { [array size HANDLES] < $BASIC_HANDLES } {
+    puts "ERROR: Handles of your bulb are not initialized yet or incorrectly. Re-run setup!\n"
+    checkArgs "setup" 2 "setup" {^setup$}
+  }
+}
+
+proc handleError {} {
+  disconnect
+  return [connect]
+}
+
+proc readBulb {handle} {
+  global DELAY
+  log "readBulb: char-read-hnd $handle"
+  send "char-read-hnd $handle\r"
+  expect {
+    "Characteristic value/descriptor: " {
+      log "ok"
+    }
+  }
+  expect -re "\[0-9a-f\ ]*" {
+    log "ok"
+  }
+  after $DELAY
+  set value [regsub -all {[\ ]+} $expect_out(buffer) {}]
+  log "readBulb: $handle $value"
+  return $value
+}
+
+proc readDeviceInfo {} {
+  global HANDLES
+  global bulb
+  set bulb(devname) [hexToASCII [readBulb $HANDLES(devname)]]
+  
+  if { [info exists HANDLES(devpassword)] } {
+    set bulb(devpassword) [hexToASCII [readBulb $HANDLES(devpassword)]]
+  } 
+
+  set bulb(devvendor) [hexToASCII [readBulb $HANDLES(devvendor)]]
+  set bulb(devid) [hexToASCII [readBulb $HANDLES(devid)]]
+  set bulb(devversion) [hexToASCII [readBulb $HANDLES(devversion)]]
+  set bulb(devsoftware) [hexToASCII [readBulb $HANDLES(devsoftware)]]
+  set bulb(devcpu) [hexToASCII [readBulb $HANDLES(devcpu)]]
+}
+
+proc readColor {} {
+  global HANDLES
+  set color [readBulb $HANDLES(color)]
+  parseColor $color
+  return $color
+}
+
+proc readEffect {} {
+  global EFFECTS
+  global HANDLES
+  global bulb
+  set effect [readBulb $HANDLES(effect)]
+  parseEffect $effect
+  if {$bulb(effect_effect) != $EFFECTS(halt)} {
+    parseColor $bulb(effect_color)
+  }
+
+  return $effect
+}
+
+proc readTimers {} {
+  global HANDLES
+  global bulb
+
+  set bulb(timer) [readBulb $HANDLES(timersettings)]
+  set bulb(timer_effect) [readBulb $HANDLES(timereffects)]
+  set bulb(time) [string range $bulb(timer) 24 29]
+
+  for {set i 0} {$i < 4} {incr i} {
+    set bulb("timer_$i") [string range $bulb(timer) [expr $i * 6] [expr $i * 6 + 5]]
+    set bulb("timer_type_$i") [string range $bulb("timer_$i") 0 1]
+    set bulb("timer_time_$i") [string range $bulb("timer_$i") 2 5]
+    set bulb("timer_effect_$i") [string range $bulb(timer_effect) [expr $i * 10] [expr $i * 10 + 9]]
+    set bulb("timer_effect_color_$i") [string range $bulb("timer_effect_$i") 0 7]
+    set bulb("timer_effect_hold_$i") [string range $bulb("timer_effect_$i") 8 9]
+  }
+}
+
+proc readRandomMode {} {
+  global HANDLES
+
+  parseRandomMode [readBulb $HANDLES(randommode)]
+}
+
+proc hexToDecimal {s} {
+  scan $s %x d
+  return $d
+}
+
+proc decimalToHex {d} {
+  scan $d %d d
+  set h [format %4.2x $d]
+  return [string trim $h]
+}
+
+proc hexToASCII {hex} {
+  set h [join $hex ""];
+  return [binary format H* $h]
+}
+
+proc asciiToHex {s} {
+  set s [string range $s 0 15]
+  set hex ""
+  foreach x [split $s ""] {
+    append hex [format %2.2X [scan $x %c]]
+  }
+  return $hex
+}
+
+proc hexToTime {hex} {
+  if {$hex == "ffff"} {
+    return "n/a"
+  }
+
+  return "[format "%02d" [hexToDecimal [string range $hex 0 1]]]:[format "%02d" [hexToDecimal [string range $hex 2 3]]]"
+}
+
+proc timeToHex {timein hm} {
+  set hex ""
+  set time [parseTime $timein]
+
+  set part [split $time ":"]
+  if {$hm >= 0} {
+    scan [lindex $part 0] %d hours
+    scan [lindex $part 1] %d minutes
+    set hex "[decimalToHex [expr $hours % 24]][decimalToHex [expr $minutes % 60]]"
+  } else {
+    scan [lindex $part 0] %d hours
+    scan [lindex $part 1] %d minutes
+    set hex "[decimalToHex [expr $minutes % 60]][decimalToHex [expr $hours % 24]]"
+  }
+  return $hex
+}
+
+proc currentTime {delta} {
+  return [clock format [expr [clock seconds] + $delta] -format %H:%M]
+}
+
+proc parseTime {time} {
+  if {[string first ":" $time] == -1} {
+    return [currentTime [expr (1 + 1 * $time) * 60]]
+  }
+
+  set part [split $time ":"]
+  scan [lindex $part 0] %d hours
+  scan [lindex $part 1] %d minutes
+  set s [expr $hours % 3600 * 3600 + $minutes % 60 * 60]
+  return [clock format $s -format %H:%M -gmt true]
+}
+
+proc offsetTime {current offset} {
+  if {[string first ":" $current] == -1} {
+    set current [currentTime [expr (1 + $current) * 60]]
+  }
+
+  set t [split $current ":"]
+
+  scan [lindex $t 0] %d h
+  scan [lindex $t 1] %d m
+
+  set s [expr $h * 3600 + $m * 60 + $offset * 60]
+
+  return [clock format $s -format %H:%M -gmt true]
+}
+
+proc toHexColor {white red green blue} {
+  return "[decimalToHex $white][decimalToHex $red][decimalToHex $green][decimalToHex $blue]"
+}
+
+proc toHexEffect {effect hold} {
+  return "[$effect]00[decimalToHex $hold]00"
+}
+
+proc currentSeconds {} {
+  global bulb
+  set secs [decimalToHex [clock format [clock seconds] -format %S]]
+  return [scan $secs %d]
+}
+
+proc buildHexColor {w r g b} {
+  return "[decimalToHex $w][decimalToHex $r][decimalToHex $g][decimalToHex $b]"
+}
+
+proc parseColor {color} {
+  global bulb
+
+  set bulb(color)         $color
+  set bulb(color_white)   [hexToDecimal [string range $color 0 1]]
+  set bulb(color_red)     [hexToDecimal [string range $color 2 3]]
+  set bulb(color_green)   [hexToDecimal [string range $color 4 5]]
+  set bulb(color_blue)    [hexToDecimal [string range $color 6 7]]
+}
+
+proc parseEffect {effect} {
+  global bulb
+
+  set bulb(effect)        $effect
+  set bulb(effect_color)  [string range $effect 0 7]
+  set bulb(prev_color)    [string range $effect 0 7]
+  set bulb(effect_effect) [string range $effect 8 9]
+  set bulb(effect_hold)   [hexToDecimal [string range $effect 12 13]]
+}
+
+proc parseRandomMode {randommode} {
+  global bulb
+
+  set bulb(randommode) $randommode
+  set bulb(randommode_status) [string range $bulb(randommode) 0 1]
+  set bulb(randommode_start) [string range $bulb(randommode) 6 9]
+  set bulb(randommode_stop) [string range $bulb(randommode) 10 13]
+  set bulb(randommode_min) [string range $bulb(randommode) 14 15]
+  set bulb(randommode_max) [string range $bulb(randommode) 16 17]
+  set bulb(randommode_color) [string range $bulb(randommode) 18 26]
+}
+
+proc getRandomStatus {} {
+  global bulb
+
+  set bulbtime [hexToTime $bulb(time)]
+
+  set randstatus "off"
+
+  if {$bulb(randommode_start) != "ffff"} {
+    set randstatus ""
+    if {[hexToTime $bulb(randommode_start)] <= [hexToTime $bulb(randommode_stop)]
+      && $bulbtime >= [hexToTime $bulb(randommode_start)] && $bulbtime < [hexToTime $bulb(randommode_stop)]} {
+      set randstatus "running"
+    } elseif {[hexToTime $bulb(randommode_start)] > [hexToTime $bulb(randommode_stop)]
+   && ($bulbtime >= [hexToTime $bulb(randommode_start)] && $bulbtime < "24:00"
+     || $bulbtime >= "00:00" && $bulbtime < [hexToTime $bulb(randommode_stop)])
+    } {
+      set randstatus "running"
+    } else {
+      set randstatus "scheduled"
+    }
+  }
+  return $randstatus
+}
+
+proc getEffectName {effect debug} {
+  global EFFECTS
+  set found "unknown"
+  foreach key [lsort [array names EFFECTS]] {
+    if {$effect == $EFFECTS($key)} {
+      set found $key
+      break
+    }
+  }
+  if {$debug == 1} {
+    set found "$found ($effect)"
+  }
+
+  return $found
+}
+
+proc getTimerType {type} {
+  global TIMER_EFFECTS
+  foreach key [lsort [array names TIMER_EFFECTS]] {
+    if {$type == $TIMER_EFFECTS($key)} {
+      return "$key"
+    }
+  }
+  return "unknown ($type)"
+}
+
+proc holdToHumanReadable {effect hold} {
+  global EFFECTS
+
+  if {$effect == $EFFECTS(blink)} {
+    set cycle [expr $hold * 2.0 / 100.0]
+    set freq [expr round(1000.0 / $cycle) / 1000.0]
+    set bpm [expr $freq * 60]
+    return "$cycle sec, $freq Hz, $bpm bpm"
+  } elseif {$effect == $EFFECTS(pulse)} {
+    set cycle [expr $hold * 51.1 / 100.0]
+    set freq [expr round(1000.0 / $cycle) / 1000.0]
+    set bpm [expr $freq * 60]
+    return "$cycle sec, $freq Hz, $bpm bpm"
+  } elseif {$effect == $EFFECTS(disco)} {
+    set cycle [expr $hold / 100.0]
+    set freq [expr round(1000.0 / $cycle) / 1000.0]
+    set bpm [expr $freq * 60]
+    return "$cycle sec, $freq Hz, $bpm bpm"
+  } elseif {$effect == $EFFECTS(rainbow)} {
+    set cycle [expr round($hold * 1.536)]
+    return "$cycle sec"
+  } elseif {$effect == $EFFECTS(halt)} {
+    return "n/a"
+  }
+  return 0
+}
+
+proc colorToString {color} {
+  if {$color == "00000000"} {
+    return "off"
+  }
+  return "WRGB([hexToDecimal [string range $color 0 1]],[hexToDecimal [string range $color 2 3]],[hexToDecimal [string range $color 4 5]],[hexToDecimal [string range $color 6 7]])"
+}
+
+proc dumpBulb {} {
+  global HANDLES
+  global bulb
+
+  set out "\n"
+  append out "Device mac:                 $bulb(mac)\n"
+  append out "Device name ($HANDLES(devname)):         $bulb(devname)\n"
+  
+  if { [info exists HANDLES(devpassword)] } {
+    append out "Device password ($HANDLES(devpassword)):     $bulb(devpassword)\n"
+  } else {
+    append out "Device password             (not supported)\n"
+  }
+  
+  append out "Device vendor ($HANDLES(devvendor)):       $bulb(devvendor)\n"
+  append out "Device id ($HANDLES(devid)):           $bulb(devid)\n"
+  append out "Device version ($HANDLES(devversion)):      $bulb(devversion)\n"
+  append out "Device software ($HANDLES(devsoftware)):     $bulb(devsoftware)\n"
+  append out "Device CPU ($HANDLES(devcpu)):          $bulb(devcpu)\n"
+  append out "\n"
+  append out "Current color ($HANDLES(color)):       $bulb(color)\n"
+  append out "White / Red / Green / Blue: [colorToString $bulb(color)]\n"
+  append out "\n"
+  append out "Current effect ($HANDLES(effect)):      $bulb(effect)\n"
+  append out "Effect:                     [getEffectName $bulb(effect_effect) 1]\n"
+  append out "Effect color:               [colorToString $bulb(effect_color)]\n"
+  append out "Effect time (raw):          $bulb(effect_hold)\n"
+  append out "Effect time (approx.):      [holdToHumanReadable $bulb(effect_effect) $bulb(effect_hold)]\n"
+  append out "\n"
+  append out "Timer Settings ($HANDLES(timersettings)):      $bulb(timer)\n"
+  append out "Timer Effect ($HANDLES(timereffects)):        $bulb(timer_effect)\n"
+  append out "\n"
+  append out "Time:                       [hexToTime $bulb(time)]\n"
+  append out "\n"
+  for {set i 0} {$i < 4} {incr i} {
+    append out "Timer [expr $i + 1]:                    $bulb("timer_$i")\n"
+    append out "Timer [expr $i + 1] effect:             $bulb("timer_effect_$i")\n"
+    append out "Timer [expr $i + 1] type:               [getTimerType $bulb("timer_type_$i")]\n"
+    append out "Timer [expr $i + 1] time:               [hexToTime $bulb("timer_time_$i")]\n"
+    append out "Timer [expr $i + 1] color:              [colorToString $bulb("timer_effect_color_$i")]\n"
+    append out "Timer [expr $i + 1] time (minutes):     [hexToDecimal $bulb("timer_effect_hold_$i")]\n"
+    append out "\n"
+  }
+  append out "Randommode ($HANDLES(randommode)):          $bulb(randommode)\n"
+
+  set randstatus [getRandomStatus]
+
+  append out "Randommode status:          $randstatus\n"
+  if {$randstatus != "off"} {
+    append out "Randommode start at:        [hexToTime $bulb(randommode_start)]\n"
+    append out "Randommode stop at:         [hexToTime $bulb(randommode_stop)]\n"
+    append out "Randommode min.:            [hexToDecimal $bulb(randommode_min)] minutes\n"
+    append out "Randommode max.:            [hexToDecimal $bulb(randommode_max)] minutes\n"
+    append out "Randommode color:           [colorToString $bulb(randommode_color)]\n"
+  }
+
+  puts $out
+}
+
+proc dumpBulbToJson {} {
+  global HANDLES
+  global bulb
+
+  set out "\{\n"
+  append out "  \"device\" : \{\n"
+  append out "    \"mac\" : \"$bulb(mac)\",\n"
+  append out "    \"name\" : \"$bulb(devname)\",\n"
+
+  if { [info exists HANDLES(devpassword)] } {
+    append out "    \"password\" : \"$bulb(devpassword)\",\n"
+  }
+
+  append out "    \"vendor\" : \"$bulb(devvendor)\",\n"
+  append out "    \"id\" : \"$bulb(devid)\",\n"
+  append out "    \"version\" : \"$bulb(devversion)\",\n"
+  append out "    \"software\" : \"$bulb(devsoftware)\",\n"
+  append out "    \"cpu\" : \"$bulb(devcpu)\"\n"
+  append out "  \},\n"
+  append out "  \"state\" : \{\n"
+  append out "    \"color\" : \"[colorToString $bulb(color)]\",\n"
+  append out "    \"effect\" : \{\n"
+  append out "      \"effect\" : \"[getEffectName $bulb(effect_effect) 0]\",\n"
+  append out "      \"color\" : \"[colorToString $bulb(effect_color)]\",\n"
+  append out "      \"time\" : \{\n"
+  append out "        \"raw\" : \"$bulb(effect_hold)\",\n"
+  append out "        \"human\" : \"[holdToHumanReadable $bulb(effect_effect) $bulb(effect_hold)]\"\n"
+  append out "      \}\n"
+  append out "    \},\n"
+  append out "    \"time\" : \"[hexToTime $bulb(time)]\"\n"
+  append out "  \},\n"
+
+  append out "  \"timer\" : \[\n"
+  for {set i 0} {$i < 4} {incr i} {
+    append out "    \{\n"
+    append out "      \"type\" : \"[getTimerType $bulb("timer_type_$i")]\",\n"
+    append out "      \"start\" : \"[hexToTime $bulb("timer_time_$i")]\",\n"
+    append out "      \"runtime\" : \"[hexToDecimal $bulb("timer_effect_hold_$i")]\",\n"
+    append out "      \"color\" : \"[colorToString $bulb("timer_effect_color_$i")]\"\n"
+    if { $i < 3 } {
+      append out "    \},\n"
+    } else {
+      append out "    \}\n"
+    }
+  }
+  append out "  \],\n"
+
+  set randstatus [getRandomStatus]
+  append out "  \"random\" : \{\n"
+  if {$randstatus != "off"} {
+    append out "    \"status\" : \"$randstatus\",\n"
+    append out "    \"start\" : \"[hexToTime $bulb(randommode_start)]\",\n"
+    append out "    \"stop\" : \"[hexToTime $bulb(randommode_stop)]\",\n"
+    append out "    \"min\" : \"[hexToDecimal $bulb(randommode_min)]\",\n"
+    append out "    \"max\" : \"[hexToDecimal $bulb(randommode_max)]\",\n"
+    append out "    \"color\" : \"[colorToString $bulb(randommode_color)]\"\n"
+  } else {
+    append out "    \"status\" : \"$randstatus\"\n"
+  }
+  append out "  \}\n"
+  append out "\}\n"
+  puts $out
+}
+
+proc printStatus {} {
+  global HANDLES
+  global EFFECTS
+  global bulb
+
+  set out "\n"
+
+  if {$bulb(effect_effect) == $EFFECTS(halt)} {
+    append out "Light:      [colorToString $bulb(color)]\n"
+  } else {
+    append out "Effect:     [getEffectName $bulb(effect_effect) 0], [colorToString $bulb(effect_color)], [holdToHumanReadable $bulb(effect_effect) $bulb(effect_hold)]\n"
+  }
+
+  append out "\n"
+
+  set planned_timers 0
+  for {set i 0} {$i < 4} {incr i} {
+    if {$bulb("timer_time_$i") == "ffff"} {
+      continue
+    }
+    incr planned_timers
+
+    append out "Timer [expr $i + 1]:    [hexToTime $bulb("timer_time_$i")], [colorToString $bulb("timer_effect_color_$i")], [hexToDecimal $bulb("timer_effect_hold_$i")]m\n"
+  }
+
+  set randstatus [getRandomStatus]
+
+  if {$randstatus != "off"} {
+    incr planned_timers
+    append out "\nRandommode: [hexToTime $bulb(randommode_start)] - [hexToTime $bulb(randommode_stop)], [colorToString $bulb(randommode_color)], [hexToDecimal $bulb(randommode_min)] - [hexToDecimal $bulb(randommode_max)]m\n"
+  }
+
+  if {$planned_timers > 0} {
+    append out "\nTime:       [hexToTime $bulb(time)]\n"
+  }
+
+  puts $out
+}
+
+proc debugBulb {n start end} {
+  set cont 1
+  set i 0
+  set start [hexToDecimal $start]
+  set end [hexToDecimal $end]
+
+  while {$i < [expr $n] && $cont == 1} {
+    incr i
+    for {set h $start} {$h <=$end} {incr h} {
+      set hnd [decimalToHex $h]
+      set value [readBulb $hnd]
+      puts "debug\t$i\t$hnd\t$value\n"
+    }
+    set cont [delay 0]
+  }
+  return $cont
+}
+
+proc playBulb {handle value cmd} {
+  global DELAY
+  global mac
+
+  log "playBulb: char-write-$cmd $handle $value"
+
+  send "char-write-$cmd $handle $value\r"
+  if {$cmd == "req"} {
+    expect {
+      "Characteristic value was written successfully" {
+        log "ok"
+      }
+    }
+  } else {
+    expect {
+      "LE" {
+        log "ok"
+      }
+    }
+  }
+  after $DELAY
+}
+
+proc playColor {new_color} {
+  global HANDLES
+  global bulb
+
+  playBulb $HANDLES(color) $new_color "cmd"
+
+  set bulb(prev_color) $bulb(color)
+  parseColor $new_color
+}
+
+proc playEffect {new_effect} {
+  global HANDLES
+  global bulb
+
+  playBulb $HANDLES(effect) $new_effect "cmd"
+
+  set bulb(prev_effect) $bulb(effect)
+  parseEffect $new_effect
+}
+
+proc playRandomMode {new_randommode} {
+  global HANDLES
+
+  playBulb $HANDLES(randommode) $new_randommode "req"
+
+  parseRandomMode $new_randommode
+}
+
+proc playTimer {new_timer} {
+  global HANDLES
+
+  playBulb $HANDLES(timersettings) $new_timer "req"
+}
+
+proc setRandomMode {start stop min max w r g b} {
+  set random [decimalToHex [currentSeconds]]
+  set currentTime [timeToHex [currentTime 0] -1]
+  set starthex [timeToHex $start 1]
+  set stophex [timeToHex $stop 1]
+  set min [decimalToHex $min]
+  set max [decimalToHex $max]
+  set color [buildHexColor $w $r $g $b]
+
+  playRandomMode "$random$currentTime$starthex$stophex$min$max$color"
+}
+
+proc stopRandomMode {} {
+  set random [decimalToHex [currentSeconds]]
+  set currentTime [timeToHex [currentTime 0] -1]
+  set starthex "ffff"
+  set stophex "ffff"
+  set min "ff"
+  set max "ff"
+  set color "00000000"
+
+  playRandomMode "$random$currentTime$starthex$stophex$min$max$color"
+}
+
+proc setTimer {timer start minutes w r g b} {
+  global TIMER_EFFECTS
+
+  set htimer [decimalToHex [expr $timer - 1]]
+  set hcolor [buildHexColor $w $r $g $b]
+  set setter "00"
+  set htype "00"
+  set hminutes [decimalToHex $minutes]
+  if {$hcolor == "00000000"} {
+    set htype "02"
+  }
+  set htime [timeToHex [currentTime 0] -1]
+  set seconds [decimalToHex [currentSeconds]]
+  set starttime [parseTime $start]
+  set hstart [timeToHex $starttime -1]
+  playTimer "$htimer$htype$seconds$htime$setter$hstart$hcolor$hminutes"
+  return [offsetTime $starttime $minutes]
+}
+
+proc stopTimer {timer} {
+  global TIMER_EFFECTS
+
+  set htimer [decimalToHex [expr $timer - 1]]
+  set htype $TIMER_EFFECTS(off)
+  set seconds [decimalToHex [currentSeconds]]
+  set setter "ff"
+  set htime [timeToHex [currentTime 0] -1]
+  set hstart "ffff"
+  set hcolor "00000000"
+  set hminutes "00"
+
+  playTimer "$htimer$htype$seconds$htime$setter$hstart$hcolor$hminutes"
+}
+
+proc resetTimer {} {
+  for {set i 1} {$i < 5} {incr i} {
+    stopTimer $i
+  }
+}
+
+proc setBulbName {name} {
+  global HANDLES
+  global bulb
+
+  playBulb $HANDLES(devname) [asciiToHex $name] req
+  set bulb(devname) $name
+
+  storeKnownBulbs
+}
+
+proc setBulbPassword {password} {
+  global HANDLES
+  global bulb
+
+  if { [info exists HANDLES(devpassword] } {
+    playBulb $HANDLES(devpassword) [asciiToHex $password] req
+    set bulb(devpassword) $password
+  } else {
+    puts "\nDevice does not support password feature.\n"
+    cleanup
+    exit 1
+  }
+}
+
+proc reset {} {
+  global HANDLES
+
+  playBulb $HANDLES(reset) "03" req
+}
+
+proc setupCharacteristics {} {
+  global hndfile
+  global mac
+
+  exec gatttool -b $mac --characteristics > $hndfile
+}
+
+proc setup {} {
+  global INIT
+  global KNOWN_BULBS_FILE
+  global hndfile
+  global mac
+  global bulb
+  global knownBulbs
+
+  puts "\nSetup for bulb started ...\n"
+
+  puts "Step 1: Read characteristics from bulb $mac ..."
+
+  setupCharacteristics
+
+  puts "> characteristics saved in $hndfile\n"
+
+  puts "Step 2: Read bulb name ..."
+  init [expr $INIT(device)]
+  set knownBulbs($mac) $bulb(devname)
+  storeKnownBulbs
+  puts "> bulb name is \"$bulb(devname)\""
+  puts "> bulb name stored in $KNOWN_BULBS_FILE for usage with aliases.\n"
+  puts "Setup completed!\n"
+  puts "Usage with mac address:"
+  puts "$ ./mipow.exp $bulb(mac) status\n"
+  puts "Usage with alias:"
+  puts "$ ./mipow.exp \"$bulb(devname)\" status\n"
+  puts "Have fun with your bulb!\n"
+
+  cleanup
+
+  exit 0
+}
+
+proc storeKnownBulbs {} {
+  global KNOWN_BULBS_FILE
+  global knownBulbs
+  global bulb
+  global mac
+
+  readKnownBulbs
+
+  set knownBulbs($mac) $bulb(devname)
+
+  set fp [open "$KNOWN_BULBS_FILE" w]
+  foreach _mac [lsort [array names knownBulbs]] {
+    puts $fp "$_mac $knownBulbs($_mac)"
+  }
+  close $fp
+}
+
+proc readKnownBulbs {} {
+  global MAC_PATTERN
+  global KNOWN_BULBS_FILE
+  global knownBulbs
+
+  if {[file exists "$KNOWN_BULBS_FILE"] == 0} {
+    return
+  }
+
+  set fp [open "$KNOWN_BULBS_FILE" r]
+  fconfigure $fp -buffering line
+
+  gets $fp data
+  while {$data != ""} {
+    regexp "($MAC_PATTERN) (\.+)" $data matched _mac _name
+
+    set knownBulbs($_mac) $_name
+    gets $fp data
+  }
+
+  close $fp
+}
+
+proc lookupKnownBulbByName {pattern} {
+  global knownBulbs
+  global bulb
+  global mac
+
+  set mac ""
+
+  foreach _mac [lsort [array names knownBulbs]] {
+    if { [string first "$pattern" $knownBulbs($_mac) ] != -1 } {
+      set mac $_mac
+    }
+  }
+}
+
+proc doCommand {} {
+  global INIT
+  global cmd
+
+  log "doCommand: received command <$cmd>"
+
+  set c $cmd
+  set cmd ""
+
+  switch -regexp $c {
+    ^status$ {
+      init [expr $INIT(color) + $INIT(effect) + $INIT(timers)]
+      printStatus
+    }
+    ^dump$ {
+      init [expr $INIT(device) + $INIT(color) + $INIT(effect) + $INIT(timers)]
+      dumpBulb
+    }
+    ^json$ {
+      init [expr $INIT(device) + $INIT(color) + $INIT(effect) + $INIT(timers)]
+      dumpBulbToJson
+    }
+    ^debug* {
+      checkArgs $c 3 "debug" {^debug [0-9]+ [0-9a-fA-F]+ [0-9a-fA-F]+$}
+      init 0
+      debugBulb [lindex $c 1] [lindex $c 2] [lindex $c 3]
+    }
+    ^down$ {
+      init $INIT(color)
+      dim
+    }
+    ^up$ {
+      init $INIT(color)
+      turnup
+    }
+    ^off$ {
+      init 0
+      turnoff
+    }
+    ^on$ {
+      init 0
+      turnon
+    }
+    ^toggle$ {
+      init [expr $INIT(color) + $INIT(effect)]
+      toggle
+    }
+    ^color* {
+      checkArgs $c 4 "color" {^color [0-9]+ [0-9]+ [0-9]+ [0-9]+$}
+      init 0
+      setColor [lindex $c 1] [lindex $c 2] [lindex $c 3] [lindex $c 4]
+    }
+    ^animate* {
+      checkArgs $c 5 "animate" {^animate [0-9]+ [0-9]+ [0-9]+ [0-9]+ [0-9]+$}
+      init [expr $INIT(color) + $INIT(effect)]
+      animate [lindex $c 1] [lindex $c 2] [lindex $c 3] [lindex $c 4] [lindex $c 5]
+    }
+    ^triangle* {
+      checkArgs $c 3 "triangle" {^triangle [0-9]+ -?[0-9]+ [0-9]+$}
+      init 0
+      triangle [lindex $c 1] [lindex $c 2] [lindex $c 3]
+    }
+    ^pulse* {
+      checkArgs $c 5 "pulse" {^pulse [0-9]+ [0-1]+ [0-1]+ [0-1]+ [0-1]+$}
+      init 0
+      setEffect "pulse" [lindex $c 1] [lindex $c 2] [lindex $c 3] [lindex $c 4] [lindex $c 5]
+    }
+    ^blink* {
+      checkArgs $c 5 "blink" {^blink [0-9]+ [0-9]+ [0-9]+ [0-9]+ [0-9]+$}
+      init 0
+      setEffect "blink" [lindex $c 1] [lindex $c 2] [lindex $c 3] [lindex $c 4] [lindex $c 5]
+    }
+    ^rainbow* {
+      checkArgs $c 1 "rainbow" {^rainbow [0-9]+$}
+      init 0
+      setEffect "rainbow" [lindex $c 1] 0 0 0 0
+    }
+    ^candle* {
+      checkArgs $c 5 "candle" {^candle [0-9]+ [0-9]+ [0-9]+ [0-9]+ [0-9]+$}
+      init 0
+      setEffect "candle" [lindex $c 1] [lindex $c 2] [lindex $c 3] [lindex $c 4] [lindex $c 5]
+    }
+    ^disco* {
+      checkArgs $c 1 "disco" {^disco [0-9]+$}
+      init 0
+      setEffect "disco" [lindex $c 1] 0 0 0 0
+    }
+    ^hold* {
+      checkArgs $c 1 "hold" {^hold [0-9]+$}
+      init [expr $INIT(color) + $INIT(effect)]
+      setEffectHold [lindex $c 1]
+    }
+    ^halt {
+      init [expr $INIT(color) + $INIT(effect)]
+      setEffectHold -1
+    }
+    ^wakeup* {
+      checkArgs $c 1 "wakeup" {^wakeup [0-9]+ ?[0-9]*[:0-9]*$}
+      init 0
+      if {[llength $c] > 2} {
+        wakeup [lindex $c 1] [lindex $c 2]
+      } else {
+        wakeup [lindex $c 1] 0
+      }
+    }
+    ^ambient* {
+      checkArgs $c 1 "ambient" {^ambient [0-9]+ ?[0-9]*[:0-9]*$}
+      init 0
+      if {[llength $c] > 2} {
+        ambient [lindex $c 1] [lindex $c 2]
+      } else {
+        ambient [lindex $c 1] 0
+      }
+    }
+    ^doze* {
+      checkArgs $c 1 "doze" {^doze [0-9]+ ?[0-9]*[:0-9]*$}
+      init 0
+      if {[llength $c] > 2} {
+        doze [lindex $c 1] [lindex $c 2]
+      } else {
+        doze [lindex $c 1] 0
+      }
+    }
+    ^bgr* {
+      checkArgs $c 1 "bgr" {^bgr [0-9]+ ?[0-9]*[:0-9]* ?[0-9]*$}
+      init 0
+      if {[llength $c] > 3} {
+        bgr [lindex $c 1] [lindex $c 2] [lindex $c 3]
+      } elseif {[llength $c] > 2} {
+        bgr [lindex $c 1] [lindex $c 2] 255
+      } else {
+        bgr [lindex $c 1] 0 255
+      }
+    }
+    ^fade* {
+      checkArgs $c 1 "fade" {^fade [0-9]+ [0-9]+ [0-9]+ [0-9]+ [0-9]+$}
+      init 0
+      resetTimer
+      setTimer 4 0 [lindex $c 1] [lindex $c 2] [lindex $c 3] [lindex $c 4] [lindex $c 5]
+    }
+    ^timer* {
+      if {[lindex $c 1] == "off"} {
+        init 0
+        resetTimer
+      } elseif {[lindex $c 2] == "off"} {
+        checkArgs $c 1 "timer" {^timer [1-4] off$}
+        init 0
+        stopTimer [lindex $c 1]
+      } elseif {[llength $c] == 4} {
+        checkArgs $c 3 "timer" {^timer [1-4] [0-9]+[:0-9]* [0-9]+$}
+        init 0
+        setTimer [lindex $c 1] [lindex $c 2] [lindex $c 3] 255 0 0 0
+      } else {
+        checkArgs $c 7 "timer" {^timer [1-4] [0-9]+[:0-9]* [0-9]+ [0-9]+ [0-9]+ [0-9]+ [0-9]+$}
+        init 0
+        setTimer [lindex $c 1] [lindex $c 2] [lindex $c 3] [lindex $c 4] [lindex $c 5] [lindex $c 6] [lindex $c 7]
+      }
+    }
+    ^random* {
+      if {[lindex $c 1] == "off"} {
+        init 0
+        stopRandomMode
+      } else {
+        checkArgs $c 8 "random" {^random [0-9]+[:0-9]* [0-9]+[:0-9]* [0-9]+ [0-9]+ [0-9]+ [0-9]+ [0-9]+ [0-9]+$}
+        init $INIT(timers)
+        setRandomMode [lindex $c 1] [lindex $c 2] [lindex $c 3] [lindex $c 4] [lindex $c 5] [lindex $c 6] [lindex $c 7] [lindex $c 8]
+      }
+    }
+    ^name* {
+      checkArgs $c 1 "name" {^name .+$}
+      init 0
+      setBulbName [lrange [concat $c] 1 end]
+    }
+    ^password* {
+      checkArgs $c 1 "password" {^password .{4}$}
+      init 0
+      setBulbPassword [lrange [concat $c] 1 end]
+    }
+    ^reset$ {
+      init 0
+      reset
+    }
+    ^stop$ {
+      # do nothing
+    }
+    ^setup$ {
+      setup
+    }
+    ^.*$ {
+      help ""
+    }
+  }
+}
+
+proc turnon {} {
+  set new_color "ff000000"
+  playColor $new_color
+}
+
+proc turnoff {} {
+  global bulb
+  playEffect "$bulb(color)ff00ffff"
+  playColor "00000000"
+}
+
+proc toggle {} {
+  global bulb
+
+  if {$bulb(color) == "00000000"} {
+    if {$bulb(prev_color) == "00000000"} {
+      playColor "ff000000"
+    } else {
+      playColor $bulb(prev_color)
+    }
+  } else {
+    turnoff
+  }
+}
+
+proc setColor {w r g b} {
+  set new_color "[buildHexColor $w $r $g $b]"
+  playColor $new_color
+}
+
+proc setEffect {effect hold w r g b} {
+  global EFFECTS
+  set new_effect "[buildHexColor $w $r $g $b]$EFFECTS($effect)00[decimalToHex $hold]00"
+  playEffect $new_effect
+}
+
+proc setEffectHold {hold} {
+  global bulb
+
+  if {$hold == -1} {
+    playEffect "00000000ff00[decimalToHex $hold]00"
+    playColor $bulb(color)
+  } else {
+    playEffect "$bulb(color)$bulb(effect_effect)00[decimalToHex $hold]00"
+  }
+}
+
+proc triangle {hold delay max} {
+  set cont 1
+  set masks "4 6 2 3 1 5 4 6 4 5 1 3 2 6 4 5 1 5"
+  set l [llength $masks]
+  set i 0
+  while {$cont == 1} {
+    incr i
+    set mask [lindex $masks [expr $i % $l]]
+    set div [expr ($i % 2 +1)]
+    set r [expr ($max * ($mask & 4) / 4) / $div]
+    set g [expr ($max * ($mask & 2) / 2) / $div]
+    set b [expr ($max * ($mask & 1)) / $div]
+
+    if {$delay == 0} {
+      setColor 0 $r $g $b
+    } elseif {$delay < 0} {
+      setColor 0 0 0 0
+      set cont [delay [expr $delay * -1]]
+      setColor 0 $r $g $b
+    } else {
+      set cont [animate 0 $r $g $b $delay]
+    }
+
+    if {$cont == 1} {
+      set cont [delay $hold]
+    }
+  }
+}
+
+proc dim {} {
+  global bulb
+
+  if {"c$bulb(color)" == "c00000000"} {
+    turnon
+  } else {
+    set w [expr round($bulb(color_white) / 2 - 0.1)]
+    set r [expr round($bulb(color_red) / 2 - 0.1)]
+    set g [expr round($bulb(color_green) / 2 - 0.1)]
+    set b [expr round($bulb(color_blue) / 2 - 0.1)]
+
+    setColor $w $r $g $b
+  }
+}
+
+proc turnup {} {
+  global bulb
+
+  if {"c$bulb(color)" == "c00000000"} {
+    setColor 1 0 0 0
+  } else {
+    set w [expr $bulb(color_white) > 127 ? 255 : $bulb(color_white) * 2]
+    set r [expr $bulb(color_red) > 127 ? 255 : $bulb(color_red) * 2]
+    set g [expr $bulb(color_green) > 127 ? 255 : $bulb(color_green) * 2]
+    set b [expr $bulb(color_blue) > 127 ? 255 : $bulb(color_blue) * 2]
+
+    setColor $w $r $g $b
+  }
+}
+
+proc wakeup {period start} {
+  set start1 $start
+  set period1 [expr round($period * 16 / 60)]
+
+  set start2 [offsetTime $start1 $period1]
+  set period2 [expr round($period * 8 / 60)]
+
+  set start3 [offsetTime $start2 $period2]
+  set period3 5
+
+  set start4 [offsetTime $start3 [expr round($period * 32 / 60)]]
+  set period4 [expr round($period * 4 / 60)]
+
+  # Step 4 - turn off
+  setTimer 4 $start4 $period4 0 0 0 0
+
+  # Step 3 - white color
+  setTimer 3 $start3 $period3 255 255 0 0
+
+  # Step 2 - cyan
+  setTimer 2 $start2 $period2 0 0 60 255
+
+  # Step 1 - blue
+  setTimer 1 $start1 $period1 0 0 00 20
+}
+
+proc doze {period start} {
+  set start1 $start
+  set period1 [expr round($period * 40 / 60)]
+
+  set start2 [offsetTime $start1 $period1]
+  set period2 [expr round($period) * 20 / 60]
+
+  # Step 2
+  setTimer 4 $start2 $period2 0 0 0 0
+
+  # Step 1
+  setTimer 3 $start1 $period1 0 255 47 0
+
+  stopTimer 1
+  stopTimer 2
+}
+
+proc bgr {period start brightness} {
+
+  set period [expr $period > 1440 ? 1440 : $period]
+  if {$period >= 1440} {
+    set lap 480
+    set last_lap 479
+  } else {
+    set lap [expr round($period / 4)]
+    set last_lap $lap
+  }
+
+  set fade [expr $lap > 255 ? 255 : $lap]
+
+  set start1 $start
+  set start2 [offsetTime $start1 $lap]
+  set start3 [offsetTime $start2 $lap]
+  set start4 [offsetTime $start3 $last_lap]
+
+
+  # Step 4 - turn off
+  setTimer 4 $start4 $fade 0 0 0 0
+
+  # Step 3 - red
+  setTimer 3 $start3 $fade 0 $brightness 0 0
+
+  # Step 2 - green
+  setTimer 2 $start2 $fade 0 0 $brightness 0
+
+  # Step 1 - blue
+  setTimer 1 $start1 $fade 0 0 0 $brightness
+}
+
+proc ambient {period start} {
+  set start1 $start
+  set period1 [expr round($period * 56 / 60)]
+
+  set start2 [offsetTime $start [expr $period - 1]]
+  set period2 [expr round($period * 4 / 60)]
+
+  # Step 2
+  setTimer 4 $start2 $period2 0 0 0 0
+
+  # Step 1
+  setTimer 3 $start1 $period1 0 255 47 0
+
+  stopTimer 1
+  stopTimer 2
+}
+
+proc animate {hold white red green blue} {
+  global bulb
+
+  set final(color_white) $white
+  set final(color_red) $red
+  set final(color_green) $green
+  set final(color_blue) $blue
+
+  set max_distance 0
+  foreach color {color_white color_red color_green color_blue} {
+    set origin($color) $bulb($color)
+    set delta($color) [expr $final($color) - $origin($color)]
+    set max_distance [expr $max_distance > abs($delta($color)) ? $max_distance : abs($delta($color))]
+  }
+
+  set steps [expr $max_distance]
+
+  set i 0
+  set cont 1
+  while {$i < $steps && $cont == 1} {
+    set i [incr i]
+    set new_color ""
+    set new_effect ""
+    foreach color {color_white color_red color_green color_blue} {
+      set step($color) [expr round($origin($color) + $i * $delta($color) / (1.0 * $steps))]
+      append new_color [decimalToHex $step($color)]
+    }
+    playColor $new_color
+    set cont [delay $hold]
+  }
+  return $cont
+}
+
+proc delay {delay} {
+  global DELAY
+  global cmd
+
+  while {$delay > 0} {
+    set d [expr $delay >= 1000 ? 1000 : $delay % 1000]
+    after [expr $d > $DELAY ? $d : $DELAY]
+    set delay [expr $delay - $d]
+
+    set cmd [readCmd]
+    if {$cmd != ""} {
+      return 0
+    }
+  }
+  return 1
+}
+
+
+##### main #####
+
+help $argv
+
+prepareBulb [lindex $argv 0]
+
+stop
+cleanup
+start
+
+spawn -noecho /usr/bin/gatttool -I
+
+set cmd [lshift $argv]
+if {$cmd == ""} {
+  set cmd "status"
+}
+
+while {$cmd != ""} {
+  doCommand
+}
+
+disconnect
+
+close -i $spawn_id
+
+cleanup

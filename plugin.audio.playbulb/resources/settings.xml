@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+  <category label="Devices">
+    <setting visible="eq(4,)" label="Discover playbulbs" type="lsep"/>
+    <setting label="No playbulbs known. Run discover first!" type="text" visible="eq(3,)" enable="false"/>
+    <setting label="Start discovery" type="action" action="RunScript($ID,discover)" default=""/>
+    <setting label="Bulb 1" type="lsep" visible="!eq(1,)"/>
+    <setting label="MAC" type="text" id="dev_0_mac" visible="!eq(0,)" enable="false" default=""/>
+    <setting label="Name" visible="!eq(-1,)" type="text" id="dev_0_name" enable="false" default=""/>
+    <setting label="Enabled" type="bool" id="dev_0_enabled" default="true" visible="!eq(-2,)"/>
+    <setting label="Bulb 2" type="lsep" visible="!eq(1,)"/>
+    <setting label="MAC" type="text" id="dev_1_mac" visible="!eq(0,)" enable="false" default=""/>
+    <setting label="Name" visible="!eq(-1,)" type="text" id="dev_1_name" enable="false" default=""/>
+    <setting label="Enabled" type="bool" id="dev_1_enabled" default="true" visible="!eq(-2,)"/>
+    <setting label="Bulb 3" type="lsep" visible="!eq(1,)"/>
+    <setting label="MAC" type="text" id="dev_2_mac" visible="!eq(0,)" enable="false" default=""/>
+    <setting label="Name" visible="!eq(-1,)" type="text" id="dev_2_name" enable="false" default=""/>
+    <setting label="Enabled" type="bool" id="dev_2_enabled" default="true" visible="!eq(-2,)"/>
+    <setting label="Bulb 4" type="lsep" visible="!eq(1,)"/>
+    <setting label="MAC" type="text" id="dev_3_mac" visible="!eq(0,)" enable="false" default=""/>
+    <setting label="Name" visible="!eq(-1,)" type="text" id="dev_3_name" enable="false" default=""/>
+    <setting label="Enabled" type="bool" id="dev_3_enabled" default="true" visible="!eq(-2,)"/>
+    <setting label="Bulb 5" type="lsep" visible="!eq(1,)"/>
+    <setting label="MAC" type="text" id="dev_4_mac" visible="!eq(0,)" enable="false" default=""/>
+    <setting label="Name" visible="!eq(-1,)" type="text" id="dev_4_name" enable="false" default=""/>
+    <setting label="Enabled" type="bool" id="dev_4_enabled" default="true" visible="!eq(-2,)"/>
+    <setting label="Bulb 6" type="lsep" visible="!eq(1,)"/>
+    <setting label="MAC" type="text" id="dev_5_mac" visible="!eq(0,)" enable="false" default=""/>
+    <setting label="Name" visible="!eq(-1,)" type="text" id="dev_5_name" enable="false" default=""/>
+    <setting label="Enabled" type="bool" id="dev_5_enabled" default="true" visible="!eq(-2,)"/>
+    <setting label="Bulb 7" type="lsep" visible="!eq(1,)"/>
+    <setting label="MAC" type="text" id="dev_6_mac" visible="!eq(0,)" enable="false" default=""/>
+    <setting label="Name" visible="!eq(-1,)" type="text" id="dev_6_name" enable="false" default=""/>
+    <setting label="Enabled" type="bool" id="dev_6_enabled" default="true" visible="!eq(-2,)"/>
+    <setting label="Bulb 8" type="lsep" visible="!eq(1,)"/>
+    <setting label="MAC" type="text" id="dev_7_mac" visible="!eq(0,)" enable="false" default=""/>
+    <setting label="Name" visible="!eq(-1,)" type="text" id="dev_7_name" enable="false" default=""/>
+    <setting label="Enabled" type="bool" id="dev_7_enabled" default="true" visible="!eq(-2,)"/>
+  </category>
+  <category label="Presets">
+    <setting label="Color 1" type="lsep"/>
+    <setting label="Enabled" type="bool" id="fav_0_enabled" default="true"/>
+    <setting label="Name" visible="!eq(-1,)" type="text" id="fav_0_name" default="white"/>
+    <setting label="Color (WRGB)" type="ipaddress" id="fav_0_color" default="255.0.0.0"/>
+    <setting label="Color 2" type="lsep"/>
+    <setting label="Enabled" type="bool" id="fav_1_enabled" default="true"/>
+    <setting label="Name" visible="!eq(-1,)" type="text" id="fav_1_name" default="red"/>
+    <setting label="Color (WRGB)" type="ipaddress" id="fav_1_color" default="0.255.0.0"/>
+    <setting label="Color 3" type="lsep"/>
+    <setting label="Enabled" type="bool" id="fav_2_enabled" default="true"/>
+    <setting label="Name" visible="!eq(-1,)" type="text" id="fav_2_name" default="yellow"/>
+    <setting label="Color (WRGB)" type="ipaddress" id="fav_2_color" default="0.255.255.0"/>
+    <setting label="Color 4" type="lsep"/>
+    <setting label="Enabled" type="bool" id="fav_3_enabled" default="true"/>
+    <setting label="Name" visible="!eq(-1,)" type="text" id="fav_3_name" default="green"/>
+    <setting label="Color (WRGB)" type="ipaddress" id="fav_3_color" default="0.0.255.0"/>
+    <setting label="Color 5" type="lsep"/>
+    <setting label="Enabled" type="bool" id="fav_4_enabled" default="true"/>
+    <setting label="Name" visible="!eq(-1,)" type="text" id="fav_4_name" default="cyan"/>
+    <setting label="Color (WRGB)" type="ipaddress" id="fav_4_color" default="0.0.255.255"/>
+    <setting label="Color 6" type="lsep"/>
+    <setting label="Enabled" type="bool" id="fav_5_enabled" default="true"/>
+    <setting label="Name" visible="!eq(-1,)" type="text" id="fav_5_name" default="blue"/>
+    <setting label="Color (WRGB)" type="ipaddress" id="fav_5_color" default="0.0.0.255"/>
+    <setting label="Color 7" type="lsep"/>
+    <setting label="Enabled" type="bool" id="fav_6_enabled" default="true"/>
+    <setting label="Name" visible="!eq(-1,)" type="text" id="fav_6_name" default="magenta"/>
+    <setting label="Color (WRGB)" type="ipaddress" id="fav_6_color" default="0.255.0.255"/>
+    <setting label="Color 8" type="lsep"/>
+    <setting label="Enabled" type="bool" id="fav_7_enabled" default="false"/>
+    <setting label="Name" visible="!eq(-1,)" type="text" id="fav_7_name" default="off"/>
+    <setting label="Color (WRGB)" type="ipaddress" id="fav_7_color" default="0.0.0.0"/>
+  </category>
+  <category label="Effects">
+    <setting label="Rainbow" type="lsep"/>
+    <setting label="Enabled" type="bool" id="effect_rainbow_enabled" default="true"/>
+    <setting label="Duration 1 (sec.)" type="slider" id="effect_rainbow_sec_0" default="360" option="int" range="30,15,390"/>
+    <setting label="Duration 2 (sec.)" type="slider" id="effect_rainbow_sec_1" default="180" option="int" range="30,15,390"/>
+    <setting label="Duration 3 (sec.)" type="slider" id="effect_rainbow_sec_2" default="90" option="int" range="30,15,390"/>
+    <setting label="Duration 4 (sec.)" type="slider" id="effect_rainbow_sec_3" default="60" option="int" range="30,15,390"/>
+    <setting label="Duration 5 (sec.)" type="slider" id="effect_rainbow_sec_4" default="30" option="int" range="30,15,390"/>
+    <setting label="Disco" type="lsep"/>
+    <setting label="Enabled" type="bool" id="effect_disco_enabled" default="true"/>
+    <setting label="BPM 1" type="slider" id="effect_disco_bpm_0" default="80" option="int" range="25,5,200"/>
+    <setting label="BPM 2" type="slider" id="effect_disco_bpm_1" default="100" option="int" range="25,5,200"/>
+    <setting label="BPM 3" type="slider" id="effect_disco_bpm_2" default="120" option="int" range="25,5,200"/>
+    <setting label="BPM 4" type="slider" id="effect_disco_bpm_3" default="150" option="int" range="25,5,200"/>
+    <setting label="BPM 5" type="slider" id="effect_disco_bpm_4" default="25" option="int" range="25,5,200"/>
+    <setting label="Candle" type="lsep"/>
+    <setting label="Enabled" type="bool" id="effect_candle_enabled" default="false"/>
+    <setting label="Pulse" type="lsep"/>
+    <setting label="Enabled" type="bool" id="effect_pulse_enabled" default="false"/>
+    <setting label="Duration 1 (sec.)" type="slider" id="effect_pulse_sec_0" default="1" option="int" range="1,1,120"/>
+    <setting label="Duration 2 (sec.)" type="slider" id="effect_pulse_sec_1" default="5" option="int" range="1,1,120"/>
+    <setting label="Duration 3 (sec.)" type="slider" id="effect_pulse_sec_2" default="10" option="int" range="1,1,120"/>
+    <setting label="Duration 4 (sec.)" type="slider" id="effect_pulse_sec_3" default="30" option="int" range="1,1,120"/>
+    <setting label="Duration 5 (sec.)" type="slider" id="effect_pulse_sec_4" default="60" option="int" range="1,1,120"/>
+    <setting label="Blink" type="lsep"/>
+    <setting label="Enabled" type="bool" id="effect_blink_enabled" default="false"/>
+    <setting label="BPM 1" type="slider" id="effect_blink_bpm_0" default="80" option="int" range="25,5,200"/>
+    <setting label="BPM 2" type="slider" id="effect_blink_bpm_1" default="100" option="int" range="25,5,200"/>
+    <setting label="BPM 3" type="slider" id="effect_blink_bpm_2" default="120" option="int" range="25,5,200"/>
+    <setting label="BPM 4" type="slider" id="effect_blink_bpm_3" default="150" option="int" range="25,5,200"/>
+    <setting label="BPM 5" type="slider" id="effect_blink_bpm_4" default="25" option="int" range="25,5,200"/>
+  </category>
+  <category label="Programs">
+    <setting label="BGR" type="lsep"/>
+    <setting label="Enabled" type="bool" id="program_bgr_enabled" default="true"/>
+    <setting label="Brightness 1" type="slider" id="program_bgr_brightness_0" default="15" option="int" range="1,1,255"/>
+    <setting label="Brightness 2" type="slider" id="program_bgr_brightness_1" default="31" option="int" range="1,1,255"/>
+    <setting label="Brightness 3" type="slider" id="program_bgr_brightness_2" default="63" option="int" range="1,1,255"/>
+    <setting label="Brightness 4" type="slider" id="program_bgr_brightness_3" default="127" option="int" range="1,1,255"/>
+    <setting label="Duration 1 (min.)" type="slider" id="program_bgr_min_0" default="60" option="int" range="4,4,1020"/>
+    <setting label="Duration 2 (min.)" type="slider" id="program_bgr_min_1" default="120" option="int" range="4,4,1020"/>
+    <setting label="Duration 3 (min.)" type="slider" id="program_bgr_min_2" default="180" option="int" range="4,4,1020"/>
+    <setting label="Duration 4 (min.)" type="slider" id="program_bgr_min_3" default="240" option="int" range="4,4,1020"/>
+    <setting label="Duration 5 (min.)" type="slider" id="program_bgr_min_4" default="360" option="int" range="4,4,1020"/>
+    <setting label="Wakeup" type="lsep"/>
+    <setting label="Enabled" type="bool" id="program_wakeup_enabled" default="true"/>
+    <setting label="Duration 1 (min.)" type="slider" id="program_wakeup_min_0" default="15" option="int" range="15,15,240"/>
+    <setting label="Duration 2 (min.)" type="slider" id="program_wakeup_min_1" default="30" option="int" range="15,15,240"/>
+    <setting label="Duration 3 (min.)" type="slider" id="program_wakeup_min_2" default="45" option="int" range="15,15,240"/>
+    <setting label="Duration 4 (min.)" type="slider" id="program_wakeup_min_3" default="60" option="int" range="15,15,240"/>
+    <setting label="Duration 5 (min.)" type="slider" id="program_wakeup_min_4" default="90" option="int" range="15,15,240"/>
+    <setting label="Doze" type="lsep"/>
+    <setting label="Enabled" type="bool" id="program_doze_enabled" default="true"/>
+    <setting label="Duration 1 (min.)" type="slider" id="program_doze_min_0" default="15" option="int" range="15,15,240"/>
+    <setting label="Duration 2 (min.)" type="slider" id="program_doze_min_1" default="30" option="int" range="15,15,240"/>
+    <setting label="Duration 3 (min.)" type="slider" id="program_doze_min_2" default="45" option="int" range="15,15,240"/>
+    <setting label="Duration 4 (min.)" type="slider" id="program_doze_min_3" default="60" option="int" range="15,15,240"/>
+    <setting label="Duration 5 (min.)" type="slider" id="program_doze_min_4" default="90" option="int" range="15,15,240"/>
+    <setting label="Ambient" type="lsep"/>
+    <setting label="Enabled" type="bool" id="program_ambient_enabled" default="true"/>
+    <setting label="Duration 1 (min.)" type="slider" id="program_ambient_min_0" default="15" option="int" range="15,15,240"/>
+    <setting label="Duration 2 (min.)" type="slider" id="program_ambient_min_1" default="30" option="int" range="15,15,240"/>
+    <setting label="Duration 3 (min.)" type="slider" id="program_ambient_min_2" default="45" option="int" range="15,15,240"/>
+    <setting label="Duration 4 (min.)" type="slider" id="program_ambient_min_3" default="90" option="int" range="15,15,240"/>
+    <setting label="Duration 5 (min.)" type="slider" id="program_ambient_min_4" default="120" option="int" range="15,15,240"/>
+  </category>
+</settings>
