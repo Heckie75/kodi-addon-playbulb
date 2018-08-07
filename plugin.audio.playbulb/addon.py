@@ -287,9 +287,11 @@ def _build_menu(mac, status = None):
 
     device = [
         {
-            "path" : "color",
+            "path" : "info",
             "name" : stext,
-            "icon" : sicon
+            "icon" : sicon,
+            "send" : ["off"],
+            "msg" : "Turn off"            
         }
     ]
 
@@ -315,11 +317,12 @@ def _build_menu(mac, status = None):
         ]
 
     if status["state"]["color"] == "off":
+        name, exact = _get_light_name(status["state"]["effect"]["color"][5:-1].split(","))
         device += [
             {
                 "path" : "turn_on",
                 "name" : "Turn light on",
-                "icon" : "icon_bulb_on",
+                "icon" : "icon_bulb_%s" % name,
                 "send" : ["toggle"],
                 "msg" : "Turn light on"
             }
@@ -373,11 +376,16 @@ def _build_menu(mac, status = None):
         }
     ]
 
+    device += _build_active_timer_entries(status)
+
+    activeTimer = _active_timer(status)
+    another = "another " if activeTimer else ""
+   
     device += [
         {
             "path" : "program",
             "param" : [ "status", json.dumps(status)],
-            "name" : "Run program...",
+            "name" : "Run %sprogram..." % another,
             "icon" : "icon_program",
             "node" : _build_menu_programs(status)
         }
@@ -492,10 +500,51 @@ def _build_menu_effects_hold(effect):
 
 
 
-def _build_menu_programs(status):
+def _build_active_timer_entries(status):
 
     entries = []
+    activeTimer = _active_timer(status)
 
+    if activeTimer:
+
+        info = ""
+        a = 0
+        for i in range(4):
+            name, exact = _get_light_name(status["timer"][i]["color"][5:-1].split(","))
+            name = ("kind of " if not exact else "") + name
+            start = status["timer"][i]["start"]
+            runtime = status["timer"][i]["runtime"]            
+            if start <> "n/a":
+                info += "\n" if a == 2 else ", " if a > 0 else ""
+                info += "%s +%smin. turn %s" % (start, runtime, name)
+                a = a + 1
+
+        entries += [
+            {
+                "path" : "info",
+                "name" : info,
+                "icon" : "icon_program",
+                "send" : ["timer", "off"],
+                "msg" : "Halt program"
+            },
+            {
+                "path" : "program_off",
+                "name" : "Halt program",
+                "icon" : "icon_halt",
+                "send" : ["timer", "off"],
+                "msg" : "Halt program"
+            }
+        ]
+
+    return entries
+
+
+
+
+def _build_menu_programs(status):
+
+    entries = _build_active_timer_entries(status)
+        
     for program in ["bgr", "wakeup", "doze", "ambient"]:
         if settings.getSetting("program_%s_enabled" % program) == "true":
             entries += [
@@ -506,19 +555,6 @@ def _build_menu_programs(status):
                     "node" : _build_menu_programs_duration(program)
                 }
             ]
-
-    activeTimer = _active_timer(status)
-
-    if activeTimer:
-        entries += [
-            {
-                "path" : "program_off",
-                "name" : "Halt running or scheduled program",
-                "icon" : "icon_halt",
-                "send" : ["timer", "off"],
-                "msg" : "Halt program but keep light"
-            }
-        ]
 
     return entries
 
