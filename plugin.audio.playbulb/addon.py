@@ -62,7 +62,7 @@ def _exec_bluetoothctl():
 
     macs = []
     names = []
-    p1 = subprocess.Popen(["echo", "-e", "quit\n\n"],
+    p1 = subprocess.Popen(["echo", "-e", "devices\nquit\n\n"],
                           stdout=subprocess.PIPE)
     p2 = subprocess.Popen(["bluetoothctl"], stdin=p1.stdout,
                           stdout=subprocess.PIPE,
