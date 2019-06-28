@@ -44,8 +44,15 @@ class BulbException(Exception):
 
 def _exec_mipow(mac, params):
 
-    call = [addon_dir + os.sep + "lib" + os.sep + "mipow.exp"]
-    call += [ mac ] + params
+    if settings.getSetting("host") == "1":
+        # remote over ssh
+        call = ["ssh", settings.getSetting("host_ip"), settings.getSetting("host_path")]
+        call += [ mac ] + params
+
+    else:
+        # local
+        call = [addon_dir + os.sep + "lib" + os.sep + "mipow.exp"]
+        call += [ mac ] + params
 
     p = subprocess.Popen(call,
                          stdout=subprocess.PIPE,
@@ -62,13 +69,26 @@ def _exec_bluetoothctl():
 
     macs = []
     names = []
-    p1 = subprocess.Popen(["echo", "-e", "devices\nquit\n\n"],
-                          stdout=subprocess.PIPE)
-    p2 = subprocess.Popen(["bluetoothctl"], stdin=p1.stdout,
-                          stdout=subprocess.PIPE,
-                          stderr=subprocess.PIPE)
-    p1.stdout.close()
+
+    if settings.getSetting("host") == "1":
+        # remote over ssh
+        p2 = subprocess.Popen(["ssh", settings.getSetting("host_ip"), 
+                            "echo -e 'devices\nquit\n\n' | bluetoothctl"], 
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
+
+    else:
+        # local
+        p1 = subprocess.Popen(["echo", "-e", "devices\nquit\n\n"],
+                                  stdout=subprocess.PIPE)
+        p2 = subprocess.Popen(["bluetoothctl"], stdin=p1.stdout,
+                              stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE)
+        p1.stdout.close()                                  
+
     out, err = p2.communicate()
+
+    xbmc.log(out, xbmc.LOGNOTICE)
 
     for match in re.finditer('([0-9A-F:]+:AC:E6) (.+)',
                              out.decode("utf-8")):
@@ -93,6 +113,7 @@ def discover():
                 smac = settings.getSetting("dev_%i_mac" % i)
                 senabled = settings.getSetting("dev_%i_enable" % i)
                 if smac == macs[m]:
+                    settings.setSetting("dev_%i_name" % i, names[m])
                     raise ContinueLoop
 
                 elif (smac == "" or senabled == "false") and i not in free:

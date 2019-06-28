@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings>
-  <category label="Devices">
+  <category label="Host">
+    <setting id="host" type="enum" label="Host" values="local|remote over ssh" />
+    <setting label="IP Address" type="ipaddress" id="host_ip" visible="!eq(-1,0)" default="127.0.0.1" />
+    <setting label="Path to mipow.exp command" type="text" id="host_path" visible="!eq(-2,0)" default="/home/raspi/mipow.exp" />
+    <setting label="SSH access without password prompt is required!" type="text" id="host_note" visible="!eq(-3,0)" enable="false" value="" />
+  </category>
+  <category label="Playbulbs">
     <setting visible="eq(4,)" label="Discover playbulbs" type="lsep"/>
     <setting label="No playbulbs known. Run discover first!" type="text" visible="eq(3,)" enable="false"/>
     <setting label="Start discovery" type="action" action="RunScript($ID,discover)" default=""/>
