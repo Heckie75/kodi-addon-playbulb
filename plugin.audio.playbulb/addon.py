@@ -17,6 +17,8 @@ __PLUGIN_ID__ = "plugin.audio.playbulb"
 
 SLOTS = 8
 PRESETS = 8
+BULB_ICONS = ["icon_lamp", "icon_globe", "icon_livingroom", "icon_bedroom", 
+                "icon_kitchen", "icon_bathroom", "icon_hall"]
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -651,6 +653,7 @@ def _build_dir_structure(path, url_params):
             mac = settings.getSetting("dev_%i_mac" % i)
             alias = settings.getSetting("dev_%i_name" % i)
             enabled = settings.getSetting("dev_%i_enabled" % i)
+            icon = BULB_ICONS[int(settings.getSetting("dev_%i_icon" % i))]
 
             if mac == "" or enabled != "true":
                 continue
@@ -659,6 +662,7 @@ def _build_dir_structure(path, url_params):
                 {
                     "path" : mac,
                     "name" : alias,
+                    "icon" : icon,
                     "node" : []
                 }
             ]
