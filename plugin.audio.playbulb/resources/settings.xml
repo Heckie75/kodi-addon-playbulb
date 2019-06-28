@@ -14,50 +14,56 @@
     <setting label="MAC" type="text" id="dev_0_mac" visible="!eq(0,)" enable="false" default=""/>
     <setting label="Name" visible="!eq(-1,)" type="text" id="dev_0_name" enable="false" default=""/>
     <setting label="Enabled" type="bool" id="dev_0_enabled" default="true" visible="!eq(-2,)"/>
-    <setting label="Groups" id="dev_0_groups" type="text"  default="" visible="!eq(-3,)" />
+    <setting label="Groups" id="dev_0_groups" type="enum"  default="" values="___|A__|_B_|AB_|__C|A_C|_BC|ABC" visible="!eq(-3,)" />
     <setting label="Icon" id="dev_0_icon" type="enum" values="Lamp|Globe|Livingroom|Bedroom|Kitchen|Bathroom|Hall" visible="!eq(-4,)"/>
     <setting label="Bulb 2" type="lsep" visible="!eq(1,)"/>
     <setting label="MAC" type="text" id="dev_1_mac" visible="!eq(0,)" enable="false" default=""/>
     <setting label="Name" visible="!eq(-1,)" type="text" id="dev_1_name" enable="false" default=""/>
     <setting label="Enabled" type="bool" id="dev_1_enabled" default="true" visible="!eq(-2,)"/>
-    <setting label="Groups" id="dev_1_groups" type="text"  default="" visible="!eq(-3,)" />
+    <setting label="Groups" id="dev_1_groups" type="enum"  default="" values="___|A__|_B_|AB_|__C|A_C|_BC|ABC" visible="!eq(-3,)" />
     <setting label="Icon" id="dev_1_icon" type="enum" values="Lamp|Globe|Livingroom|Bedroom|Kitchen|Bathroom|Hall" visible="!eq(-4,)"/>
     <setting label="Bulb 3" type="lsep" visible="!eq(1,)"/>
     <setting label="MAC" type="text" id="dev_2_mac" visible="!eq(0,)" enable="false" default=""/>
     <setting label="Name" visible="!eq(-1,)" type="text" id="dev_2_name" enable="false" default=""/>
     <setting label="Enabled" type="bool" id="dev_2_enabled" default="true" visible="!eq(-2,)"/>
-    <setting label="Groups" id="dev_2_groups" type="text"  default="" visible="!eq(-3,)" />
+    <setting label="Groups" id="dev_2_groups" type="enum"  default="" values="___|A__|_B_|AB_|__C|A_C|_BC|ABC" visible="!eq(-3,)" />
     <setting label="Icon" id="dev_2_icon" type="enum" values="Lamp|Globe|Livingroom|Bedroom|Kitchen|Bathroom|Hall" visible="!eq(-4,)"/>
     <setting label="Bulb 4" type="lsep" visible="!eq(1,)"/>
     <setting label="MAC" type="text" id="dev_3_mac" visible="!eq(0,)" enable="false" default=""/>
     <setting label="Name" visible="!eq(-1,)" type="text" id="dev_3_name" enable="false" default=""/>
     <setting label="Enabled" type="bool" id="dev_3_enabled" default="true" visible="!eq(-2,)"/>
-    <setting label="Groups" id="dev_3_groups" type="text"  default="" visible="!eq(-3,)" />
+    <setting label="Groups" id="dev_3_groups" type="enum"  default="" values="___|A__|_B_|AB_|__C|A_C|_BC|ABC" visible="!eq(-3,)" />
     <setting label="Icon" id="dev_3_icon" type="enum" values="Lamp|Globe|Livingroom|Bedroom|Kitchen|Bathroom|Hall" visible="!eq(-4,)"/>
     <setting label="Bulb 5" type="lsep" visible="!eq(1,)"/>
     <setting label="MAC" type="text" id="dev_4_mac" visible="!eq(0,)" enable="false" default=""/>
     <setting label="Name" visible="!eq(-1,)" type="text" id="dev_4_name" enable="false" default=""/>
     <setting label="Enabled" type="bool" id="dev_4_enabled" default="true" visible="!eq(-2,)"/>
-    <setting label="Groups" id="dev_4_groups" type="text"  default="" visible="!eq(-3,)" />
+    <setting label="Groups" id="dev_4_groups" type="enum"  default="" values="___|A__|_B_|AB_|__C|A_C|_BC|ABC" visible="!eq(-3,)" />
     <setting label="Icon" id="dev_4_icon" type="enum" values="Lamp|Globe|Livingroom|Bedroom|Kitchen|Bathroom|Hall" visible="!eq(-4,)"/>
     <setting label="Bulb 6" type="lsep" visible="!eq(1,)"/>
     <setting label="MAC" type="text" id="dev_5_mac" visible="!eq(0,)" enable="false" default=""/>
     <setting label="Name" visible="!eq(-1,)" type="text" id="dev_5_name" enable="false" default=""/>
     <setting label="Enabled" type="bool" id="dev_5_enabled" default="true" visible="!eq(-2,)"/>
-    <setting label="Groups" id="dev_5_groups" type="text"  default="" visible="!eq(-3,)" />
+    <setting label="Groups" id="dev_5_groups" type="enum"  default="" values="___|A__|_B_|AB_|__C|A_C|_BC|ABC" visible="!eq(-3,)" />
     <setting label="Icon" id="dev_5_icon" type="enum" values="Lamp|Globe|Livingroom|Bedroom|Kitchen|Bathroom|Hall" visible="!eq(-4,)"/>
     <setting label="Bulb 7" type="lsep" visible="!eq(1,)"/>
     <setting label="MAC" type="text" id="dev_6_mac" visible="!eq(0,)" enable="false" default=""/>
     <setting label="Name" visible="!eq(-1,)" type="text" id="dev_6_name" enable="false" default=""/>
     <setting label="Enabled" type="bool" id="dev_6_enabled" default="true" visible="!eq(-2,)"/>
-    <setting label="Groups" id="dev_6_groups" type="text"  default="" visible="!eq(-3,)" />
+    <setting label="Groups" id="dev_6_groups" type="enum"  default="" values="___|A__|_B_|AB_|__C|A_C|_BC|ABC" visible="!eq(-3,)" />
     <setting label="Icon" id="dev_6_icon" type="enum" values="Lamp|Globe|Livingroom|Bedroom|Kitchen|Bathroom|Hall" visible="!eq(-4,)"/>
     <setting label="Bulb 8" type="lsep" visible="!eq(1,)"/>
     <setting label="MAC" type="text" id="dev_7_mac" visible="!eq(0,)" enable="false" default=""/>
     <setting label="Name" visible="!eq(-1,)" type="text" id="dev_7_name" enable="false" default=""/>
     <setting label="Enabled" type="bool" id="dev_7_enabled" default="true" visible="!eq(-2,)"/>
-    <setting label="Groups" id="dev_7_groups" type="text"  default="" visible="!eq(-3,)" />
+    <setting label="Groups" id="dev_7_groups" type="enum"  default="" values="___|A__|_B_|AB_|__C|A_C|_BC|ABC" visible="!eq(-3,)" />
     <setting label="Icon" id="dev_7_icon" type="enum" values="Lamp|Globe|Livingroom|Bedroom|Kitchen|Bathroom|Hall" visible="!eq(-4,)"/>
+  </category>
+  <category label="Groups">
+    <setting label="Group A" id="group_0" type="text" default="Group A" />
+    <setting label="Group B" id="group_1" type="text" default="Group B" />
+    <setting label="Group C" id="group_2" type="text" default="Group C" />
+    <setting label="Display Group All" id="group_all" type="bool" default="False" />
   </category>
   <category label="Presets">
     <setting label="Color 1" type="lsep"/>

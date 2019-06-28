@@ -17,7 +17,7 @@ __PLUGIN_ID__ = "plugin.audio.playbulb"
 
 SLOTS = 8
 PRESETS = 8
-BULB_ICONS = ["icon_lamp", "icon_globe", "icon_livingroom", "icon_bedroom", 
+BULB_ICONS = ["icon_lamp", "icon_globe", "icon_livingroom", "icon_bedroom",
                 "icon_kitchen", "icon_bathroom", "icon_hall"]
 
 reload(sys)
@@ -74,8 +74,8 @@ def _exec_bluetoothctl():
 
     if settings.getSetting("host") == "1":
         # remote over ssh
-        p2 = subprocess.Popen(["ssh", settings.getSetting("host_ip"), 
-                            "echo -e 'devices\nquit\n\n' | bluetoothctl"], 
+        p2 = subprocess.Popen(["ssh", settings.getSetting("host_ip"),
+                            "echo -e 'devices\nquit\n\n' | bluetoothctl"],
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
 
@@ -86,7 +86,7 @@ def _exec_bluetoothctl():
         p2 = subprocess.Popen(["bluetoothctl"], stdin=p1.stdout,
                               stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE)
-        p1.stdout.close()                                  
+        p1.stdout.close()
 
     out, err = p2.communicate()
 
@@ -247,9 +247,42 @@ def _add_list_item(entry, path):
 
 
 
-def _get_status(mac):
+def _get_macs_of_target(target):
 
-    output = _exec_mipow(mac, ["json"])
+    if not target.startswith("group_"):
+        return [ target ]
+
+    target = target.replace("group_", "")
+
+    macs = []
+
+    for i in range(SLOTS):
+
+        mac = settings.getSetting("dev_%i_mac" % i)
+        enabled = settings.getSetting("dev_%i_enabled" % i)
+        groups = int(settings.getSetting("dev_%i_groups" % i))
+
+        if mac == "" or enabled != "true":
+            continue
+
+        if target == "all":
+            macs += [ mac ]
+            continue
+
+        group = pow(2, int(target))
+        if (group & groups == group):
+            macs += [ mac ]
+
+    return macs
+
+
+
+
+def _get_status(target):
+
+    macs = _get_macs_of_target(target)
+
+    output = _exec_mipow(macs[0], ["json"])
     return json.loads(output)
 
 
@@ -285,10 +318,10 @@ def _active_timer(status):
 
 
 
-def _build_menu(mac, status = None):
+def _build_menu(target, status = None):
 
     if not status:
-        status = _get_status(mac)
+        status = _get_status(target)
 
     stext = "%s: " % (status["device"]["name"])
     if status["random"]["status"] == "running":
@@ -314,7 +347,7 @@ def _build_menu(mac, status = None):
             "name" : stext,
             "icon" : sicon,
             "send" : ["off"],
-            "msg" : "Turn off"            
+            "msg" : "Turn off"
         }
     ]
 
@@ -403,7 +436,7 @@ def _build_menu(mac, status = None):
 
     activeTimer = _active_timer(status)
     another = "another " if activeTimer else ""
-   
+
     device += [
         {
             "path" : "program",
@@ -536,7 +569,7 @@ def _build_active_timer_entries(status):
             name, exact = _get_light_name(status["timer"][i]["color"][5:-1].split(","))
             name = ("kind of " if not exact else "") + name
             start = status["timer"][i]["start"]
-            runtime = status["timer"][i]["runtime"]            
+            runtime = status["timer"][i]["runtime"]
             if start <> "n/a":
                 info += "\n" if a == 2 else ", " if a > 0 else ""
                 info += "%s +%smin. turn %s" % (start, runtime, name)
@@ -567,7 +600,7 @@ def _build_active_timer_entries(status):
 def _build_menu_programs(status):
 
     entries = _build_active_timer_entries(status)
-        
+
     for program in ["bgr", "wakeup", "doze", "ambient"]:
         if settings.getSetting("program_%s_enabled" % program) == "true":
             entries += [
@@ -648,15 +681,19 @@ def _build_dir_structure(path, url_params):
 
     # root
     if path == "/":
+        assigned_groups = 0
         for i in range(SLOTS):
 
             mac = settings.getSetting("dev_%i_mac" % i)
             alias = settings.getSetting("dev_%i_name" % i)
             enabled = settings.getSetting("dev_%i_enabled" % i)
             icon = BULB_ICONS[int(settings.getSetting("dev_%i_icon" % i))]
+            groups = int(settings.getSetting("dev_%i_groups" % i))
 
             if mac == "" or enabled != "true":
                 continue
+
+            assigned_groups |= groups
 
             entries += [
                 {
@@ -667,22 +704,43 @@ def _build_dir_structure(path, url_params):
                 }
             ]
 
+        for i in range(0, 3):
+            if pow(2, i) & assigned_groups == pow(2, i):
+                entries += [
+                    {
+                        "path" : "group_%i" % i,
+                        "name" : settings.getSetting("group_%i" % i),
+                        "icon" : "icon_group",
+                        "node" : []
+                    }
+                ]
+        
+        if settings.getSetting("group_all") == "true":
+            entries += [
+                {
+                    "path" : "group_all",
+                    "name" : "All",
+                    "icon" : "icon_group_all",
+                    "node" : []
+                }
+            ]            
+
     # device main menu with status
     elif path != "/" and len(splitted_path) > 0:
         status = None
         if "status" in url_params:
             status = json.loads(url_params["status"][0])
 
-        mac = splitted_path[0]
+        target = splitted_path[0]
         entries = [
             {
-                "path" : mac,
-                "node" : _build_menu(mac, status)
+                "path" : target,
+                "node" : _build_menu(target, status)
             }
         ]
 
     _menu = [
-        { # root
+        {
         "path" : "",
         "node" : entries
         }
@@ -717,7 +775,7 @@ def execute(path, params):
         return
 
 
-    mac = splitted_path[1]
+    target = splitted_path[1]
 
     if "silent" not in params:
         xbmc.executebuiltin("Notification(%s, %s, %s/icon.png)"
@@ -725,14 +783,16 @@ def execute(path, params):
 
     try:
         xbmc.log(" ".join(params["send"]), xbmc.LOGNOTICE);
-        output = _exec_mipow(mac, params["send"])
+
+        for mac in _get_macs_of_target(target):
+            output = _exec_mipow(mac, params["send"])
 
         if "silent" not in params:
             xbmc.executebuiltin("Notification(%s, %s, %s/icon.png)"
                         % (params["msg"][0], "successful", addon_dir))
 
             xbmc.executebuiltin('Container.Update("plugin://%s/%s","update")'
-                        % (__PLUGIN_ID__, mac))
+                        % (__PLUGIN_ID__, target))
 
     except BulbException:
         if "silent" not in params:
