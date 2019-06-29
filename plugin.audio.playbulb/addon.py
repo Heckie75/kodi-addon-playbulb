@@ -384,10 +384,17 @@ def _build_menu(target, status = None):
             {
                 "path" : "turn_on",
                 "name" : "Turn light on",
+                "icon" : "icon_bulb_on",
+                "send" : ["on"],
+                "msg" : "Turn light on"
+            },
+            {
+                "path" : "turn_on",
+                "name" : "Toggle light",
                 "icon" : "icon_bulb_%s" % name,
                 "send" : ["toggle"],
-                "msg" : "Turn light on"
-            }
+                "msg" : "Toggle light"
+            }            
         ]
     elif status["state"]["color"] <> "off":
         device += [
@@ -395,8 +402,15 @@ def _build_menu(target, status = None):
                 "path" : "turn_off",
                 "name" : "Turn light off",
                 "icon" : "icon_bulb_off",
-                "send" : ["toggle"],
+                "send" : ["off"],
                 "msg" : "Turn light off"
+            },
+            {
+                "path" : "turn_off",
+                "name" : "Toggle light",
+                "icon" : "icon_bulb_off",
+                "send" : ["off"],
+                "msg" : "Toggle light"
             }
         ]
 
