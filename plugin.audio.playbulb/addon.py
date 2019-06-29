@@ -323,7 +323,13 @@ def _build_menu(target, status = None):
     if not status:
         status = _get_status(target)
 
-    stext = "%s: " % (status["device"]["name"])
+    if target == "group_all":
+        stext = "All bulbs: "
+    elif target.startswith("group_"):
+        stext = "%s: " % settings.getSetting(target)
+    else:
+        stext = "%s: " % (status["device"]["name"])
+
     if status["random"]["status"] == "running":
         stext = "Security mode is running until %s " % (status["random"]["stop"])
         sicon = "icon_random"
@@ -517,7 +523,7 @@ def _build_menu_effects_hold(effect):
     entries = []
     unit = "bpm" if effect in ["blink", "disco"] else "sec"
 
-    for i in range(4):
+    for i in range(5):
         setting = settings.getSetting("effect_%s_%s_%i" % (effect, unit, i))
         hold = 255
         if effect == "rainbow":
