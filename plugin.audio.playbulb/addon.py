@@ -48,7 +48,9 @@ def _exec_mipow(mac, params):
 
     if settings.getSetting("host") == "1":
         # remote over ssh
-        call = ["ssh", settings.getSetting("host_ip"), settings.getSetting("host_path")]
+        call = ["ssh", settings.getSetting("host_ip"),
+                "-p %s" % settings.getSetting("host_port"), 
+                settings.getSetting("host_path")]
         call += [ mac ] + params
 
     else:
@@ -75,6 +77,7 @@ def _exec_bluetoothctl():
     if settings.getSetting("host") == "1":
         # remote over ssh
         p2 = subprocess.Popen(["ssh", settings.getSetting("host_ip"),
+                            "-p %s" % settings.getSetting("host_port"), 
                             "echo -e 'devices\nquit\n\n' | bluetoothctl"],
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
