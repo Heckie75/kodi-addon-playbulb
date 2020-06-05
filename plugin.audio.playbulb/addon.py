@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 # -*- coding: utf-8 -*-
 
 import json
@@ -6,6 +6,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 import urlparse
 
 import xbmc
@@ -46,10 +47,12 @@ class BulbException(Exception):
 
 def _exec_mipow(mac, params):
 
+    params = [ "--" + params[0] ] + params[1:]
+
     if settings.getSetting("host") == "1":
         # remote over ssh
         call = ["ssh", settings.getSetting("host_ip"),
-                "-p %s" % settings.getSetting("host_port"), 
+                "-p %s" % settings.getSetting("host_port"),
                 settings.getSetting("host_path")]
         call += [ mac ] + params
 
@@ -77,7 +80,7 @@ def _exec_bluetoothctl():
     if settings.getSetting("host") == "1":
         # remote over ssh
         p2 = subprocess.Popen(["ssh", settings.getSetting("host_ip"),
-                            "-p %s" % settings.getSetting("host_port"), 
+                            "-p %s" % settings.getSetting("host_port"),
                             "echo -e 'devices\nquit\n\n' | bluetoothctl"],
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
@@ -397,7 +400,7 @@ def _build_menu(target, status = None):
                 "icon" : "icon_bulb_%s" % name,
                 "send" : ["toggle"],
                 "msg" : "Toggle light"
-            }            
+            }
         ]
     elif status["state"]["color"] <> "off":
         device += [
@@ -737,7 +740,7 @@ def _build_dir_structure(path, url_params):
                         "node" : []
                     }
                 ]
-        
+
         if settings.getSetting("group_all") == "true":
             entries += [
                 {
@@ -746,7 +749,7 @@ def _build_dir_structure(path, url_params):
                     "icon" : "icon_group_all",
                     "node" : []
                 }
-            ]            
+            ]
 
     # device main menu with status
     elif path != "/" and len(splitted_path) > 0:
@@ -809,6 +812,7 @@ def execute(path, params):
 
         for mac in _get_macs_of_target(target):
             output = _exec_mipow(mac, params["send"])
+            time.sleep(0.5)
 
         if "silent" not in params:
             xbmc.executebuiltin("Notification(%s, %s, %s/icon.png)"
