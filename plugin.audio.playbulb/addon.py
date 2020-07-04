@@ -61,6 +61,8 @@ def _exec_mipow(mac, params):
         call = [addon_dir + os.sep + "lib" + os.sep + "mipow.exp"]
         call += [ mac ] + params
 
+    xbmc.log(" ".join(call), xbmc.LOGNOTICE)
+
     p = subprocess.Popen(call,
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE)
@@ -350,7 +352,7 @@ def _build_menu(target, status = None):
         stext = "Effect: "
         stext += status["state"]["effect"]["effect"]
         stext += ", " + ("some kind of " if not exact else "") + name
-        stext += ", " + status["state"]["effect"]["time"]["human"]
+        stext += ", " + status["state"]["effect"]["time"]["speed_human"]
         sicon = "icon_" + status["state"]["effect"]["effect"]
 
     device = [
@@ -686,7 +688,7 @@ def _build_menu_programs_brightness(duration):
                 "path" : str(i),
                 "name" : "%s (%i%%)" % (setting, percent),
                 "icon" : "icon_bgr",
-                "send" : ["bgr", duration, "0", setting],
+                "send" : ["wheel", "bgr", duration, "0", setting],
                 "msg" : "Run program bgr for %s min." % duration
             }
         ]
