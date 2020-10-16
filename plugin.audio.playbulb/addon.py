@@ -24,7 +24,7 @@ BULB_ICONS = ["icon_lamp", "icon_globe", "icon_livingroom", "icon_bedroom",
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-settings = xbmcaddon.Addon(id=__PLUGIN_ID__);
+settings = xbmcaddon.Addon(id=__PLUGIN_ID__)
 addon_dir = xbmc.translatePath( settings.getAddonInfo('path') )
 
 _light_names = ["off", "blue", "green", "cyan", "red", "magenta", "yellow", "white", "on"]
@@ -732,7 +732,7 @@ def _build_dir_structure(path, url_params):
                 }
             ]
 
-        for i in range(0, 3):
+        for i in range(0, 5):
             if pow(2, i) & assigned_groups == pow(2, i):
                 entries += [
                     {
