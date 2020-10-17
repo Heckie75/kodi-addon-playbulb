@@ -48,8 +48,6 @@ class BulbException(Exception):
 
 def _exec_mipow(mac, params):
 
-    params = [ "--" + params[0] ] + params[1:]
-
     if settings.getSetting("host") == "1":
         # remote over ssh
         call = ["ssh", settings.getSetting("host_ip"),
@@ -291,7 +289,7 @@ def _get_status(target):
 
     macs = _get_macs_of_target(target)
 
-    output = _exec_mipow(macs[0], ["json"])
+    output = _exec_mipow(macs[0], ["--color", "--effect", "--timer", "--random", "--json"])
     return json.loads(output)
 
 
@@ -327,6 +325,17 @@ def _active_timer(status):
 
 
 
+def _get_name_by_mac(mac):
+
+    for i in range(SLOTS):
+        if settings.getSetting("dev_%i_mac" % i) == mac:
+            return settings.getSetting("dev_%i_name" % i)
+
+    return mac
+
+
+
+
 def _build_menu(target, status = None):
 
     if not status:
@@ -337,7 +346,7 @@ def _build_menu(target, status = None):
     elif target.startswith("group_"):
         stext = "%s: " % settings.getSetting(target)
     else:
-        stext = "%s: " % (status["device"]["name"])
+        stext = "%s: " % _get_name_by_mac(target)
 
     if status["random"]["status"] == "running":
         stext = "Security mode is running until %s " % (status["random"]["stop"])
@@ -361,7 +370,7 @@ def _build_menu(target, status = None):
             "path" : "info",
             "name" : stext,
             "icon" : sicon,
-            "send" : ["off"],
+            "send" : ["--off"],
             "msg" : "Turn off"
         }
     ]
@@ -372,7 +381,7 @@ def _build_menu(target, status = None):
                 "path" : "random_off",
                 "name" : "Turn security mode off",
                 "icon" : "icon_power",
-                "send" : ["random", "off"],
+                "send" : ["--random", "off"],
                 "msg" : "Turn security mode off"
             }
         ]
@@ -382,7 +391,7 @@ def _build_menu(target, status = None):
                 "path" : "effect_halt",
                 "name" : "Halt current effect, keep light",
                 "icon" : "icon_halt",
-                "send" : ["halt"],
+                "send" : ["--halt"],
                 "msg" : "Halt current effect by keeping light"
             }
         ]
@@ -394,14 +403,14 @@ def _build_menu(target, status = None):
                 "path" : "turn_on",
                 "name" : "Turn light on",
                 "icon" : "icon_bulb_on",
-                "send" : ["on"],
+                "send" : ["--on"],
                 "msg" : "Turn light on"
             },
             {
                 "path" : "turn_on",
                 "name" : "Toggle light",
                 "icon" : "icon_bulb_%s" % name,
-                "send" : ["toggle"],
+                "send" : ["--toggle"],
                 "msg" : "Toggle light"
             }
         ]
@@ -411,14 +420,14 @@ def _build_menu(target, status = None):
                 "path" : "turn_off",
                 "name" : "Turn light off",
                 "icon" : "icon_bulb_off",
-                "send" : ["off"],
+                "send" : ["--off"],
                 "msg" : "Turn light off"
             },
             {
                 "path" : "turn_off",
                 "name" : "Toggle light",
                 "icon" : "icon_bulb_off",
-                "send" : ["off"],
+                "send" : ["--off"],
                 "msg" : "Toggle light"
             }
         ]
@@ -429,14 +438,14 @@ def _build_menu(target, status = None):
                     "path" : "up",
                     "name" : "Turn up light",
                     "icon" : "icon_bulb_up",
-                    "send" : ["up"],
+                    "send" : ["--up"],
                     "msg" : "Turn up light"
                 },
                 {
                     "path" : "dim",
                     "name" : "Dim light",
                     "icon" : "icon_bulb_down",
-                    "send" : ["down"],
+                    "send" : ["--down"],
                     "msg" : "Dim light"
                 }
             ]
@@ -447,7 +456,7 @@ def _build_menu(target, status = None):
             "param" : [ "status", json.dumps(status)],
             "name" : "Set light...",
             "icon" : "icon_presets",
-            "node" : _build_menu_color(["color"])
+            "node" : _build_menu_color(["--color"])
         }
     ]
 
@@ -481,7 +490,7 @@ def _build_menu(target, status = None):
 
 
 
-def _build_menu_color(command, normalize = False):
+def _build_menu_color(command, suffix=[], normalize = False):
 
     entries = []
     for i in range(PRESETS):
@@ -499,7 +508,7 @@ def _build_menu_color(command, normalize = False):
                     "path" : "/".join(command) + ("%i" % i),
                     "name" : "%s" % settings.getSetting("fav_%i_name" % i),
                     "icon" : "icon_bulb_%s" % name,
-                    "send" : command + setting,
+                    "send" : command + setting + suffix,
                     "msg" : "Set light to %s" % settings.getSetting("fav_%i_name" % i)
                 }
             ]
@@ -531,7 +540,7 @@ def _build_menu_effects(status):
                 "param" : [ "status", json.dumps(status)],
                 "name" : "Halt current effect, keep light",
                 "icon" : "icon_halt",
-                "send" : ["halt"],
+                "send" : ["--halt"],
                 "msg" : "Halt current effect by keeping light"
             }
         ]
@@ -566,7 +575,7 @@ def _build_menu_effects_hold(effect):
                     "path" : str(i),
                     "name" : "%s %s" % (setting, unit),
                     "icon" : "icon_%s" % effect,
-                    "node" : _build_menu_color([effect, str(hold)], effect == "pulse")
+                    "node" : _build_menu_color(["--" + effect], suffix = [str(hold)], normalize = effect == "pulse")
                 }
             ]
         else:
@@ -575,7 +584,7 @@ def _build_menu_effects_hold(effect):
                     "path" : str(i),
                     "name" : "%s %s" % (setting, unit),
                     "icon" : "icon_%s" % effect,
-                    "send" : [effect, hold],
+                    "send" : ["--" + effect, hold],
                     "msg" : "Start %s with %s %s" % (effect, setting, unit)
                 }
             ]
@@ -609,14 +618,14 @@ def _build_active_timer_entries(status):
                 "path" : "info",
                 "name" : info,
                 "icon" : "icon_program",
-                "send" : ["timer", "off"],
+                "send" : ["--timer", "off"],
                 "msg" : "Halt program"
             },
             {
                 "path" : "program_off",
                 "name" : "Halt program",
                 "icon" : "icon_halt",
-                "send" : ["timer", "off"],
+                "send" : ["--timer", "off"],
                 "msg" : "Halt program"
             }
         ]
@@ -668,7 +677,7 @@ def _build_menu_programs_duration(program):
                     "path" : str(i),
                     "name" : "%s min." % setting,
                     "icon" : "icon_%s" % program,
-                    "send" : [program, setting, 0],
+                    "send" : ["--" + program, setting, 0],
                     "msg" : "Run program %s for %s min." % (program, setting)
                 }
             ]
@@ -689,7 +698,7 @@ def _build_menu_programs_brightness(duration):
                 "path" : str(i),
                 "name" : "%s (%i%%)" % (setting, percent),
                 "icon" : "icon_bgr",
-                "send" : ["wheel", "bgr", duration, "0", setting],
+                "send" : ["--wheel", "bgr", duration, "0", setting],
                 "msg" : "Run program bgr for %s min." % duration
             }
         ]
@@ -828,7 +837,7 @@ def execute(path, params):
         threads = []
 
         for mac in _get_macs_of_target(target):
-            xbmc.log(mac, xbmc.LOGNOTICE)
+
             threads.append(threading.Thread(target=_exec_mipow, args=(mac, params["send"])))
             
             if len(threads) > _max_parallel:
