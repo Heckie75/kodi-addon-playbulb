@@ -6,6 +6,7 @@ import os
 import re
 import subprocess
 import sys
+import threading
 import time
 import urlparse
 
@@ -796,6 +797,17 @@ def browse(path, url_params):
 
 
 
+def _exec_mipows(threads):
+
+    for t in threads:
+        t.start()
+
+    for t in threads:
+        t.join()
+
+
+
+
 def execute(path, params):
 
     splitted_path = path.split("/")
@@ -812,9 +824,19 @@ def execute(path, params):
     try:
         xbmc.log(" ".join(params["send"]), xbmc.LOGNOTICE);
 
+        _max_parallel = int(settings.getSetting("threads"))
+        threads = []
+
         for mac in _get_macs_of_target(target):
-            output = _exec_mipow(mac, params["send"])
-            time.sleep(0.5)
+            xbmc.log(mac, xbmc.LOGNOTICE)
+            threads.append(threading.Thread(target=_exec_mipow, args=(mac, params["send"])))
+            
+            if len(threads) > _max_parallel:
+                _exec_mipows(threads)
+                threads = []
+
+        _exec_mipows(threads)
+        
 
         if "silent" not in params:
             xbmc.executebuiltin("Notification(%s, %s, %s/icon.png)"
