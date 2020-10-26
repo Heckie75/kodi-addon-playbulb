@@ -136,6 +136,13 @@
     <setting label="BPM 5" type="slider" id="effect_blink_bpm_4" default="25" option="int" range="25,5,200"/>
   </category>
   <category label="Programs">
+    <setting label="Fade" type="lsep"/>
+    <setting label="Enabled" type="bool" id="program_fade_enabled" default="true"/>
+    <setting label="Duration 1 (min.)" type="slider" id="program_fade_min_0" default="1" option="int" range="1,1,255"/>
+    <setting label="Duration 2 (min.)" type="slider" id="program_fade_min_1" default="5" option="int" range="1,1,255"/>
+    <setting label="Duration 3 (min.)" type="slider" id="program_fade_min_2" default="15" option="int" range="1,1,255"/>
+    <setting label="Duration 4 (min.)" type="slider" id="program_fade_min_3" default="30" option="int" range="1,1,255"/>
+    <setting label="Duration 5 (min.)" type="slider" id="program_fade_min_4" default="60" option="int" range="1,1,255"/>    
     <setting label="BGR" type="lsep"/>
     <setting label="Enabled" type="bool" id="program_bgr_enabled" default="true"/>
     <setting label="Brightness 1" type="slider" id="program_bgr_brightness_0" default="15" option="int" range="1,1,255"/>

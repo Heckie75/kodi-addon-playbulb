@@ -490,25 +490,25 @@ def _build_menu(target, status = None):
 
 
 
-def _build_menu_color(command, parameter=[], normalize = False):
+def _build_menu_color(command, leading_params=[], trailing_params=[], normalize = False):
 
     entries = []
     for i in range(PRESETS):
         if settings.getSetting("fav_%i_enabled" % i) == "true":
             name, exact = _get_light_name(settings.getSetting("fav_%i_color" % i).split("."))
 
-            setting = settings.getSetting("fav_%i_color" % i).split(".")
+            color = settings.getSetting("fav_%i_color" % i).split(".")
 
             if normalize:
-                for j in range(len(setting)):
-                    setting[j] = 1 if setting[j] <> "0" else "0"
+                for j in range(len(color)):
+                    color[j] = 1 if color[j] <> "0" else "0"
 
             entries += [
                 {
                     "path" : "/" + command + ("%i" % i),
                     "name" : "%s" % settings.getSetting("fav_%i_name" % i),
                     "icon" : "icon_bulb_%s" % name,
-                    "send" : [ command ] + setting + parameter,
+                    "send" : [ command ] + leading_params + color + trailing_params,
                     "msg" : "Set light to %s" % settings.getSetting("fav_%i_name" % i)
                 }
             ]
@@ -575,7 +575,7 @@ def _build_menu_effects_hold(effect):
                     "path" : str(i),
                     "name" : "%s %s" % (setting, unit),
                     "icon" : "icon_%s" % effect,
-                    "node" : _build_menu_color("--" + effect, parameter = [ str(hold) ], normalize = effect == "pulse")
+                    "node" : _build_menu_color("--" + effect, trailing_params = [ str(hold) ], normalize = effect == "pulse")
                 }
             ]
         else:
@@ -639,7 +639,7 @@ def _build_menu_programs(status):
 
     entries = _build_active_timer_entries(status)
 
-    for program in ["bgr", "wakeup", "doze", "ambient"]:
+    for program in ["fade", "bgr", "wakeup", "doze", "ambient"]:
         if settings.getSetting("program_%s_enabled" % program) == "true":
             entries += [
                 {
@@ -669,6 +669,15 @@ def _build_menu_programs_duration(program):
                     "name" : "%s min." % setting,
                     "icon" : "icon_%s" % program,
                     "node" : _build_menu_programs_brightness(setting)
+                }
+            ]
+        elif program == "fade":
+            entries += [
+                {
+                    "path" : str(i),
+                    "name" : "%s min." % setting,
+                    "icon" : "icon_%s" % program,
+                    "node" : _build_menu_color("--fade", leading_params=[ setting ])
                 }
             ]
         else:
