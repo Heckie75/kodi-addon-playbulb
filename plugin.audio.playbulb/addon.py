@@ -456,7 +456,7 @@ def _build_menu(target, status = None):
             "param" : [ "status", json.dumps(status)],
             "name" : "Set light...",
             "icon" : "icon_presets",
-            "node" : _build_menu_color(["--color"])
+            "node" : _build_menu_color("--color")
         }
     ]
 
@@ -490,7 +490,7 @@ def _build_menu(target, status = None):
 
 
 
-def _build_menu_color(command, suffix=[], normalize = False):
+def _build_menu_color(command, parameter=[], normalize = False):
 
     entries = []
     for i in range(PRESETS):
@@ -505,10 +505,10 @@ def _build_menu_color(command, suffix=[], normalize = False):
 
             entries += [
                 {
-                    "path" : "/".join(command) + ("%i" % i),
+                    "path" : "/" + command + ("%i" % i),
                     "name" : "%s" % settings.getSetting("fav_%i_name" % i),
                     "icon" : "icon_bulb_%s" % name,
-                    "send" : command + setting + suffix,
+                    "send" : [ command ] + setting + parameter,
                     "msg" : "Set light to %s" % settings.getSetting("fav_%i_name" % i)
                 }
             ]
@@ -575,7 +575,7 @@ def _build_menu_effects_hold(effect):
                     "path" : str(i),
                     "name" : "%s %s" % (setting, unit),
                     "icon" : "icon_%s" % effect,
-                    "node" : _build_menu_color(["--" + effect], suffix = [str(hold)], normalize = effect == "pulse")
+                    "node" : _build_menu_color("--" + effect, parameter = [ str(hold) ], normalize = effect == "pulse")
                 }
             ]
         else:
@@ -813,6 +813,8 @@ def _exec_mipows(threads):
 
     for t in threads:
         t.join()
+
+    time.sleep(0.4)
 
 
 
