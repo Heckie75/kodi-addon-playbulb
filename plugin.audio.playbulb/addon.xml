@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.audio.playbulb" name="Mipow Playbulb Control" version="0.0.5"
+<addon id="plugin.audio.playbulb" name="Mipow Playbulb Control" version="2.0.0"
 	provider-name="Heckie">
-	<requires>
-		<import addon="xbmc.python" version="2.25.0" />
-		<import addon="xmbc.json" version="7.0.0" />
-	</requires>
 	<extension point="xbmc.python.pluginsource" library="addon.py">
 		<provides>audio</provides>
 	</extension>
@@ -19,8 +15,8 @@
 		<website></website>
 		<email></email>
 		<source></source>
-		<news>v0.0.1 (2018-08-01)
-		- development starts
+		<news>v2.0.0 (2020-02-20)
+		- Migration to Kodi v19 alias Matrix
 		</news>
 		<assets>
 			<icon>icon.png</icon>

@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import json
@@ -8,42 +8,35 @@ import subprocess
 import sys
 import threading
 import time
-import urlparse
+import urllib.parse
 
 import xbmc
 import xbmcgui
 import xbmcplugin
 import xbmcaddon
+import xbmcvfs
 
 __PLUGIN_ID__ = "plugin.audio.playbulb"
 
 SLOTS = 8
 PRESETS = 8
 BULB_ICONS = ["icon_lamp", "icon_globe", "icon_livingroom", "icon_bedroom",
-                "icon_kitchen", "icon_bathroom", "icon_hall"]
-
-reload(sys)
-sys.setdefaultencoding('utf8')
+              "icon_kitchen", "icon_bathroom", "icon_hall"]
 
 settings = xbmcaddon.Addon(id=__PLUGIN_ID__)
-addon_dir = xbmc.translatePath( settings.getAddonInfo('path') )
+addon_dir = xbmcvfs.translatePath(settings.getAddonInfo('path'))
 
-_light_names = ["off", "blue", "green", "cyan", "red", "magenta", "yellow", "white", "on"]
+_light_names = ["off", "blue", "green", "cyan",
+                "red", "magenta", "yellow", "white", "on"]
 _menu = []
-
-
 
 
 class ContinueLoop(Exception):
     pass
 
 
-
-
 class BulbException(Exception):
     pass
-
-
 
 
 def _exec_mipow(mac, params):
@@ -53,24 +46,21 @@ def _exec_mipow(mac, params):
         call = ["ssh", settings.getSetting("host_ip"),
                 "-p %s" % settings.getSetting("host_port"),
                 settings.getSetting("host_path")]
-        call += [ mac ] + params
+        call += [mac] + params
 
     else:
         # local
         call = [addon_dir + os.sep + "lib" + os.sep + "mipow.exp"]
-        call += [ mac ] + params
+        call += [mac] + params
 
-    xbmc.log(" ".join(call), xbmc.LOGNOTICE)
+    xbmc.log(" ".join(call), xbmc.LOGINFO)
 
     p = subprocess.Popen(call,
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE)
 
     out, err = p.communicate()
-    xbmc.log(out, xbmc.LOGNOTICE)
     return out.decode("utf-8")
-
-
 
 
 def _exec_bluetoothctl():
@@ -81,23 +71,23 @@ def _exec_bluetoothctl():
     if settings.getSetting("host") == "1":
         # remote over ssh
         p2 = subprocess.Popen(["ssh", settings.getSetting("host_ip"),
-                            "-p %s" % settings.getSetting("host_port"),
-                            "echo -e 'devices\nquit\n\n' | bluetoothctl"],
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+                               "-p %s" % settings.getSetting("host_port"),
+                               "echo -e 'devices\nquit\n\n' | bluetoothctl"],
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
 
     else:
         # local
         p1 = subprocess.Popen(["echo", "-e", "devices\nquit\n\n"],
-                                  stdout=subprocess.PIPE)
+                              stdout=subprocess.PIPE)
         p2 = subprocess.Popen(["bluetoothctl"], stdin=p1.stdout,
                               stdout=subprocess.PIPE,
-                                  stderr=subprocess.PIPE)
+                              stderr=subprocess.PIPE)
         p1.stdout.close()
 
     out, err = p2.communicate()
 
-    xbmc.log(out, xbmc.LOGNOTICE)
+    xbmc.log(out, xbmc.LOGINFO)
 
     for match in re.finditer('([0-9A-F:]+:AC:E6) (.+)',
                              out.decode("utf-8")):
@@ -105,8 +95,6 @@ def _exec_bluetoothctl():
         names += [match.group(2)]
 
     return macs, names
-
-
 
 
 def discover():
@@ -126,10 +114,9 @@ def discover():
                     raise ContinueLoop
 
                 elif (smac == "" or senabled == "false") and i not in free:
-                    free += [ i ]
+                    free += [i]
 
-
-            inserts += [ m ]
+            inserts += [m]
 
         except ContinueLoop:
             continue
@@ -165,8 +152,6 @@ def discover():
             "%i new bulbs added to device list)" % len(inserts))
 
 
-
-
 def _get_directory_by_path(path):
 
     if path == "/":
@@ -185,9 +170,7 @@ def _get_directory_by_path(path):
     return directory
 
 
-
-
-def _build_param_string(param, values, current = ""):
+def _build_param_string(param, values, current=""):
 
     if values == None:
         return current
@@ -197,8 +180,6 @@ def _build_param_string(param, values, current = ""):
         current += param + "=" + str(v)
 
     return current
-
-
 
 
 def _add_list_item(entry, path):
@@ -212,21 +193,21 @@ def _add_list_item(entry, path):
     param_string = ""
     if "send" in entry:
         param_string = _build_param_string(
-            param = "send",
-            values = entry["send"],
-            current = param_string)
+            param="send",
+            values=entry["send"],
+            current=param_string)
 
     if "param" in entry:
         param_string = _build_param_string(
-            param = entry["param"][0],
-            values = [ entry["param"][1] ],
-            current = param_string)
+            param=entry["param"][0],
+            values=[entry["param"][1]],
+            current=param_string)
 
     if "msg" in entry:
         param_string = _build_param_string(
-            param = "msg",
-            values = [ entry["msg"] ],
-            current = param_string)
+            param="msg",
+            values=[entry["msg"]],
+            current=param_string)
 
     if "node" in entry:
         is_folder = True
@@ -238,26 +219,26 @@ def _add_list_item(entry, path):
         label = settings.getSetting("label%s" % item_id)
 
     if "icon" in entry:
-        icon_file = os.path.join(addon_dir, "resources", "assets", entry["icon"] + ".png")
+        icon_file = os.path.join(
+            addon_dir, "resources", "assets", entry["icon"] + ".png")
     else:
         icon_file = None
 
-    li = xbmcgui.ListItem(label, iconImage=icon_file)
+    li = xbmcgui.ListItem(label)
+    li.setArt({"icon": icon_file})
 
     xbmcplugin.addDirectoryItem(handle=addon_handle,
-                            listitem=li,
-                            url="plugin://" + __PLUGIN_ID__
-                            + item_path
-                            + param_string,
-                            isFolder=is_folder)
-
-
+                                listitem=li,
+                                url="plugin://" + __PLUGIN_ID__
+                                + item_path
+                                + param_string,
+                                isFolder=is_folder)
 
 
 def _get_macs_of_target(target):
 
     if not target.startswith("group_"):
-        return [ target ]
+        return [target]
 
     target = target.replace("group_", "")
 
@@ -273,31 +254,28 @@ def _get_macs_of_target(target):
             continue
 
         if target == "all":
-            macs += [ mac ]
+            macs += [mac]
             continue
 
         group = pow(2, int(target))
         if (group & groups == group):
-            macs += [ mac ]
+            macs += [mac]
 
     return macs
-
-
 
 
 def _get_status(target):
 
     macs = _get_macs_of_target(target)
 
-    output = _exec_mipow(macs[0], ["--color", "--effect", "--timer", "--random", "--json"])
+    output = _exec_mipow(
+        macs[0], ["--color", "--effect", "--timer", "--random", "--json"])
     return json.loads(output)
-
-
 
 
 def _get_light_name(color):
 
-    if len(color) <> 4:
+    if len(color) != 4:
         return "off", True
 
     v = 0
@@ -312,8 +290,6 @@ def _get_light_name(color):
     return _light_names[8 if v > 8 else v], min == max
 
 
-
-
 def _active_timer(status):
 
     activeTimer = False
@@ -321,8 +297,6 @@ def _active_timer(status):
         activeTimer = activeTimer or not status["timer"][t]["start"] == "n/a"
 
     return activeTimer
-
-
 
 
 def _get_name_by_mac(mac):
@@ -334,9 +308,7 @@ def _get_name_by_mac(mac):
     return mac
 
 
-
-
-def _build_menu(target, status = None):
+def _build_menu(target, status=None):
 
     if not status:
         status = _get_status(target)
@@ -349,14 +321,17 @@ def _build_menu(target, status = None):
         stext = "%s: " % _get_name_by_mac(target)
 
     if status["random"]["status"] == "running":
-        stext = "Security mode is running until %s " % (status["random"]["stop"])
+        stext = "Security mode is running until %s " % (
+            status["random"]["stop"])
         sicon = "icon_random"
     elif status["state"]["effect"]["effect"] == "halt":
-        name, exact = _get_light_name(status["state"]["color"][5:-1].split(","))
+        name, exact = _get_light_name(
+            status["state"]["color"][5:-1].split(","))
         stext += ("kind of " if not exact else "") + name
         sicon = "icon_bulb_%s" % name
     else:
-        name, exact = _get_light_name(status["state"]["effect"]["color"][5:-1].split(","))
+        name, exact = _get_light_name(
+            status["state"]["effect"]["color"][5:-1].split(","))
         stext += ("kind of " if not exact else "") + name
 
         stext = "Effect: "
@@ -367,106 +342,107 @@ def _build_menu(target, status = None):
 
     device = [
         {
-            "path" : "info",
-            "name" : stext,
-            "icon" : sicon,
-            "send" : ["--off"],
-            "msg" : "Turn off"
+            "path": "info",
+            "name": stext,
+            "icon": sicon,
+            "send": ["--off"],
+            "msg": "Turn off"
         }
     ]
 
     if status["random"]["status"] == "running":
         device += [
             {
-                "path" : "random_off",
-                "name" : "Turn security mode off",
-                "icon" : "icon_power",
-                "send" : ["--random", "off"],
-                "msg" : "Turn security mode off"
+                "path": "random_off",
+                "name": "Turn security mode off",
+                "icon": "icon_power",
+                "send": ["--random", "off"],
+                "msg": "Turn security mode off"
             }
         ]
-    elif status["state"]["effect"]["effect"] <> "halt":
+    elif status["state"]["effect"]["effect"] != "halt":
         device += [
             {
-                "path" : "effect_halt",
-                "name" : "Halt current effect, keep light",
-                "icon" : "icon_halt",
-                "send" : ["--halt"],
-                "msg" : "Halt current effect by keeping light"
+                "path": "effect_halt",
+                "name": "Halt current effect, keep light",
+                "icon": "icon_halt",
+                "send": ["--halt"],
+                "msg": "Halt current effect by keeping light"
             }
         ]
 
     if status["state"]["color"] == "off":
-        name, exact = _get_light_name(status["state"]["effect"]["color"][5:-1].split(","))
+        name, exact = _get_light_name(
+            status["state"]["effect"]["color"][5:-1].split(","))
         device += [
             {
-                "path" : "turn_on",
-                "name" : "Turn light on",
-                "icon" : "icon_bulb_on",
-                "send" : ["--on"],
-                "msg" : "Turn light on"
+                "path": "turn_on",
+                "name": "Turn light on",
+                "icon": "icon_bulb_on",
+                "send": ["--on"],
+                "msg": "Turn light on"
             },
             {
-                "path" : "turn_on",
-                "name" : "Toggle light",
-                "icon" : "icon_bulb_%s" % name,
-                "send" : ["--toggle"],
-                "msg" : "Toggle light"
+                "path": "turn_on",
+                "name": "Toggle light",
+                "icon": "icon_bulb_%s" % name,
+                "send": ["--toggle"],
+                "msg": "Toggle light"
             }
         ]
-    elif status["state"]["color"] <> "off":
+    elif status["state"]["color"] != "off":
         device += [
             {
-                "path" : "turn_off",
-                "name" : "Turn light off",
-                "icon" : "icon_bulb_off",
-                "send" : ["--off"],
-                "msg" : "Turn light off"
+                "path": "turn_off",
+                "name": "Turn light off",
+                "icon": "icon_bulb_off",
+                "send": ["--off"],
+                "msg": "Turn light off"
             },
             {
-                "path" : "turn_off",
-                "name" : "Toggle light",
-                "icon" : "icon_bulb_off",
-                "send" : ["--off"],
-                "msg" : "Toggle light"
+                "path": "turn_off",
+                "name": "Toggle light",
+                "icon": "icon_bulb_off",
+                "send": ["--off"],
+                "msg": "Toggle light"
             }
         ]
 
         if status["state"]["effect"]["effect"] == "halt":
             device += [
                 {
-                    "path" : "up",
-                    "name" : "Turn up light",
-                    "icon" : "icon_bulb_up",
-                    "send" : ["--up"],
-                    "msg" : "Turn up light"
+                    "path": "up",
+                    "name": "Turn up light",
+                    "icon": "icon_bulb_up",
+                    "send": ["--up"],
+                    "msg": "Turn up light"
                 },
                 {
-                    "path" : "dim",
-                    "name" : "Dim light",
-                    "icon" : "icon_bulb_down",
-                    "send" : ["--down"],
-                    "msg" : "Dim light"
+                    "path": "dim",
+                    "name": "Dim light",
+                    "icon": "icon_bulb_down",
+                    "send": ["--down"],
+                    "msg": "Dim light"
                 }
             ]
 
     device += [
         {
-            "path" : "light",
-            "param" : [ "status", json.dumps(status)],
-            "name" : "Set light...",
-            "icon" : "icon_presets",
-            "node" : _build_menu_color("--color")
+            "path": "light",
+            "param": ["status", json.dumps(status)],
+            "name": "Set light...",
+            "icon": "icon_presets",
+            "node": _build_menu_color("--color")
         }
     ]
 
     device += [
         {
-            "path" : "effect",
-            "param" : [ "status", json.dumps(status)],
-            "name" : "Run effect...",
-            "icon" : "icon_effect",
-            "node" : _build_menu_effects(status)
+            "path": "effect",
+            "param": ["status", json.dumps(status)],
+            "name": "Run effect...",
+            "icon": "icon_effect",
+            "node": _build_menu_effects(status)
         }
     ]
 
@@ -477,45 +453,42 @@ def _build_menu(target, status = None):
 
     device += [
         {
-            "path" : "program",
-            "param" : [ "status", json.dumps(status)],
-            "name" : "Run %sprogram..." % another,
-            "icon" : "icon_program",
-            "node" : _build_menu_programs(status)
+            "path": "program",
+            "param": ["status", json.dumps(status)],
+            "name": "Run %sprogram..." % another,
+            "icon": "icon_program",
+            "node": _build_menu_programs(status)
         }
     ]
 
     return device
 
 
-
-
-def _build_menu_color(command, leading_params=[], trailing_params=[], normalize = False):
+def _build_menu_color(command, leading_params=[], trailing_params=[], normalize=False):
 
     entries = []
     for i in range(PRESETS):
         if settings.getSetting("fav_%i_enabled" % i) == "true":
-            name, exact = _get_light_name(settings.getSetting("fav_%i_color" % i).split("."))
+            name, exact = _get_light_name(
+                settings.getSetting("fav_%i_color" % i).split("."))
 
             color = settings.getSetting("fav_%i_color" % i).split(".")
 
             if normalize:
                 for j in range(len(color)):
-                    color[j] = 1 if color[j] <> "0" else "0"
+                    color[j] = 1 if color[j] != "0" else "0"
 
             entries += [
                 {
-                    "path" : "/" + command + ("%i" % i),
-                    "name" : "%s" % settings.getSetting("fav_%i_name" % i),
-                    "icon" : "icon_bulb_%s" % name,
-                    "send" : [ command ] + leading_params + color + trailing_params,
-                    "msg" : "Set light to %s" % settings.getSetting("fav_%i_name" % i)
+                    "path": "/" + command + ("%i" % i),
+                    "name": "%s" % settings.getSetting("fav_%i_name" % i),
+                    "icon": "icon_bulb_%s" % name,
+                    "send": [command] + leading_params + color + trailing_params,
+                    "msg": "Set light to %s" % settings.getSetting("fav_%i_name" % i)
                 }
             ]
 
     return entries
-
-
 
 
 def _build_menu_effects(status):
@@ -526,28 +499,26 @@ def _build_menu_effects(status):
         if settings.getSetting("effect_%s_enabled" % effect) == "true":
             entries += [
                 {
-                    "path" : effect,
-                    "name" : effect,
-                    "icon" : "icon_%s" % effect,
-                    "node" : _build_menu_effects_hold(effect)
+                    "path": effect,
+                    "name": effect,
+                    "icon": "icon_%s" % effect,
+                    "node": _build_menu_effects_hold(effect)
                 }
             ]
 
-    if status["state"]["effect"]["effect"] <> "halt":
+    if status["state"]["effect"]["effect"] != "halt":
         entries += [
             {
-                "path" : "effect_halt",
-                "param" : [ "status", json.dumps(status)],
-                "name" : "Halt current effect, keep light",
-                "icon" : "icon_halt",
-                "send" : ["--halt"],
-                "msg" : "Halt current effect by keeping light"
+                "path": "effect_halt",
+                "param": ["status", json.dumps(status)],
+                "name": "Halt current effect, keep light",
+                "icon": "icon_halt",
+                "send": ["--halt"],
+                "msg": "Halt current effect by keeping light"
             }
         ]
 
     return entries
-
-
 
 
 def _build_menu_effects_hold(effect):
@@ -566,32 +537,30 @@ def _build_menu_effects_hold(effect):
             hold = int(3000.0 / float(setting))
         elif effect == "disco":
             hold = int(6000.0 / float(setting))
-        elif setting <> "":
+        elif setting != "":
             hold = int(setting)
 
         if effect not in ["rainbow", "disco"]:
             entries += [
                 {
-                    "path" : str(i),
-                    "name" : "%s %s" % (setting, unit),
-                    "icon" : "icon_%s" % effect,
-                    "node" : _build_menu_color("--" + effect, trailing_params = [ str(hold) ], normalize = effect == "pulse")
+                    "path": str(i),
+                    "name": "%s %s" % (setting, unit),
+                    "icon": "icon_%s" % effect,
+                    "node": _build_menu_color("--" + effect, trailing_params=[str(hold)], normalize=effect == "pulse")
                 }
             ]
         else:
             entries += [
                 {
-                    "path" : str(i),
-                    "name" : "%s %s" % (setting, unit),
-                    "icon" : "icon_%s" % effect,
-                    "send" : ["--" + effect, hold],
-                    "msg" : "Start %s with %s %s" % (effect, setting, unit)
+                    "path": str(i),
+                    "name": "%s %s" % (setting, unit),
+                    "icon": "icon_%s" % effect,
+                    "send": ["--" + effect, hold],
+                    "msg": "Start %s with %s %s" % (effect, setting, unit)
                 }
             ]
 
     return entries
-
-
 
 
 def _build_active_timer_entries(status):
@@ -604,35 +573,34 @@ def _build_active_timer_entries(status):
         info = ""
         a = 0
         for i in range(4):
-            name, exact = _get_light_name(status["timer"][i]["color"][5:-1].split(","))
+            name, exact = _get_light_name(
+                status["timer"][i]["color"][5:-1].split(","))
             name = ("kind of " if not exact else "") + name
             start = status["timer"][i]["start"]
             runtime = status["timer"][i]["runtime"]
-            if start <> "n/a":
+            if start != "n/a":
                 info += "\n" if a == 2 else ", " if a > 0 else ""
                 info += "%s +%smin. turn %s" % (start, runtime, name)
                 a = a + 1
 
         entries += [
             {
-                "path" : "info",
-                "name" : info,
-                "icon" : "icon_program",
-                "send" : ["--timer", "off"],
-                "msg" : "Halt program"
+                "path": "info",
+                "name": info,
+                "icon": "icon_program",
+                "send": ["--timer", "off"],
+                "msg": "Halt program"
             },
             {
-                "path" : "program_off",
-                "name" : "Halt program",
-                "icon" : "icon_halt",
-                "send" : ["--timer", "off"],
-                "msg" : "Halt program"
+                "path": "program_off",
+                "name": "Halt program",
+                "icon": "icon_halt",
+                "send": ["--timer", "off"],
+                "msg": "Halt program"
             }
         ]
 
     return entries
-
-
 
 
 def _build_menu_programs(status):
@@ -643,16 +611,14 @@ def _build_menu_programs(status):
         if settings.getSetting("program_%s_enabled" % program) == "true":
             entries += [
                 {
-                    "path" : program,
-                    "name" : program,
-                    "icon" : "icon_%s" % program,
-                    "node" : _build_menu_programs_duration(program)
+                    "path": program,
+                    "name": program,
+                    "icon": "icon_%s" % program,
+                    "node": _build_menu_programs_duration(program)
                 }
             ]
 
     return entries
-
-
 
 
 def _build_menu_programs_duration(program):
@@ -665,35 +631,33 @@ def _build_menu_programs_duration(program):
         if program == "bgr":
             entries += [
                 {
-                    "path" : str(i),
-                    "name" : "%s min." % setting,
-                    "icon" : "icon_%s" % program,
-                    "node" : _build_menu_programs_brightness(setting)
+                    "path": str(i),
+                    "name": "%s min." % setting,
+                    "icon": "icon_%s" % program,
+                    "node": _build_menu_programs_brightness(setting)
                 }
             ]
         elif program == "fade":
             entries += [
                 {
-                    "path" : str(i),
-                    "name" : "%s min." % setting,
-                    "icon" : "icon_%s" % program,
-                    "node" : _build_menu_color("--fade", leading_params=[ setting ])
+                    "path": str(i),
+                    "name": "%s min." % setting,
+                    "icon": "icon_%s" % program,
+                    "node": _build_menu_color("--fade", leading_params=[setting])
                 }
             ]
         else:
             entries += [
                 {
-                    "path" : str(i),
-                    "name" : "%s min." % setting,
-                    "icon" : "icon_%s" % program,
-                    "send" : ["--" + program, setting, 0],
-                    "msg" : "Run program %s for %s min." % (program, setting)
+                    "path": str(i),
+                    "name": "%s min." % setting,
+                    "icon": "icon_%s" % program,
+                    "send": ["--" + program, setting, 0],
+                    "msg": "Run program %s for %s min." % (program, setting)
                 }
             ]
 
     return entries
-
-
 
 
 def _build_menu_programs_brightness(duration):
@@ -701,20 +665,19 @@ def _build_menu_programs_brightness(duration):
     entries = []
     for i in range(4):
         setting = settings.getSetting("program_bgr_brightness_%i" % i)
-        percent = round(100 * float(settings.getSetting("program_bgr_brightness_%i" % i)) / 255.0)
+        percent = round(
+            100 * float(settings.getSetting("program_bgr_brightness_%i" % i)) / 255.0)
         entries += [
             {
-                "path" : str(i),
-                "name" : "%s (%i%%)" % (setting, percent),
-                "icon" : "icon_bgr",
-                "send" : ["--wheel", "bgr", duration, "0", setting],
-                "msg" : "Run program bgr for %s min." % duration
+                "path": str(i),
+                "name": "%s (%i%%)" % (setting, percent),
+                "icon": "icon_bgr",
+                "send": ["--wheel", "bgr", duration, "0", setting],
+                "msg": "Run program bgr for %s min." % duration
             }
         ]
 
     return entries
-
-
 
 
 def _build_dir_structure(path, url_params):
@@ -744,10 +707,10 @@ def _build_dir_structure(path, url_params):
 
             entries += [
                 {
-                    "path" : mac,
-                    "name" : alias,
-                    "icon" : icon,
-                    "node" : []
+                    "path": mac,
+                    "name": alias,
+                    "icon": icon,
+                    "node": []
                 }
             ]
 
@@ -755,20 +718,20 @@ def _build_dir_structure(path, url_params):
             if pow(2, i) & assigned_groups == pow(2, i):
                 entries += [
                     {
-                        "path" : "group_%i" % i,
-                        "name" : settings.getSetting("group_%i" % i),
-                        "icon" : "icon_group",
-                        "node" : []
+                        "path": "group_%i" % i,
+                        "name": settings.getSetting("group_%i" % i),
+                        "icon": "icon_group",
+                        "node": []
                     }
                 ]
 
         if settings.getSetting("group_all") == "true":
             entries += [
                 {
-                    "path" : "group_all",
-                    "name" : "All",
-                    "icon" : "icon_group_all",
-                    "node" : []
+                    "path": "group_all",
+                    "name": "All",
+                    "icon": "icon_group_all",
+                    "node": []
                 }
             ]
 
@@ -781,19 +744,17 @@ def _build_dir_structure(path, url_params):
         target = splitted_path[0]
         entries = [
             {
-                "path" : target,
-                "node" : _build_menu(target, status)
+                "path": target,
+                "node": _build_menu(target, status)
             }
         ]
 
     _menu = [
         {
-        "path" : "",
-        "node" : entries
+            "path": "",
+            "node": entries
         }
     ]
-
-
 
 
 def browse(path, url_params):
@@ -809,10 +770,8 @@ def browse(path, url_params):
 
     except BulbException:
         xbmc.executebuiltin("Notification(%s, %s, %s/icon.png)"
-                        % ("Synchronization failed!",
-                           "Try again!", addon_dir))
-
-
+                            % ("Synchronization failed!",
+                               "Try again!", addon_dir))
 
 
 def _exec_mipows(threads):
@@ -826,51 +785,46 @@ def _exec_mipows(threads):
     time.sleep(0.4)
 
 
-
-
 def execute(path, params):
 
     splitted_path = path.split("/")
     if len(splitted_path) < 2:
         return
 
-
     target = splitted_path[1]
 
     if "silent" not in params:
         xbmc.executebuiltin("Notification(%s, %s, %s/icon.png)"
-                        % (params["msg"][0], "Sending data to bulb...", addon_dir))
+                            % (params["msg"][0], "Sending data to bulb...", addon_dir))
 
     try:
-        xbmc.log(" ".join(params["send"]), xbmc.LOGNOTICE);
+        xbmc.log(" ".join(params["send"]), xbmc.LOGINFO)
 
         _max_parallel = int(settings.getSetting("threads"))
         threads = []
 
         for mac in _get_macs_of_target(target):
 
-            threads.append(threading.Thread(target=_exec_mipow, args=(mac, params["send"])))
-            
+            threads.append(threading.Thread(
+                target=_exec_mipow, args=(mac, params["send"])))
+
             if len(threads) > _max_parallel:
                 _exec_mipows(threads)
                 threads = []
 
         _exec_mipows(threads)
-        
 
         if "silent" not in params:
             xbmc.executebuiltin("Notification(%s, %s, %s/icon.png)"
-                        % (params["msg"][0], "successful", addon_dir))
+                                % (params["msg"][0], "successful", addon_dir))
 
             xbmc.executebuiltin('Container.Update("plugin://%s/%s","update")'
-                        % (__PLUGIN_ID__, target))
+                                % (__PLUGIN_ID__, target))
 
     except BulbException:
         if "silent" not in params:
             xbmc.executebuiltin("Notification(%s, %s, %s/icon.png)"
-                        % (params["msg"][0], "Failed! Try again", addon_dir))
-
-
+                                % (params["msg"][0], "Failed! Try again", addon_dir))
 
 
 if __name__ == '__main__':
@@ -879,8 +833,8 @@ if __name__ == '__main__':
         discover()
     else:
         addon_handle = int(sys.argv[1])
-        path = urlparse.urlparse(sys.argv[0]).path
-        url_params = urlparse.parse_qs(sys.argv[2][1:])
+        path = urllib.parse.urlparse(sys.argv[0]).path
+        url_params = urllib.parse.parse_qs(sys.argv[2][1:])
 
         if "send" in url_params:
             execute(path, url_params)
