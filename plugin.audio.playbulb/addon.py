@@ -11,17 +11,17 @@ import time
 import urllib.parse
 
 import xbmc
+import xbmcaddon
 import xbmcgui
 import xbmcplugin
-import xbmcaddon
 import xbmcvfs
 
 __PLUGIN_ID__ = "plugin.audio.playbulb"
 
-SLOTS = 8
+SLOTS = 12
 PRESETS = 8
 BULB_ICONS = ["icon_lamp", "icon_globe", "icon_livingroom", "icon_bedroom",
-              "icon_kitchen", "icon_bathroom", "icon_hall"]
+              "icon_kitchen", "icon_bathroom", "icon_hall", "icon_candle"]
 
 settings = xbmcaddon.Addon(id=__PLUGIN_ID__)
 addon_dir = xbmcvfs.translatePath(settings.getAddonInfo('path'))
@@ -87,9 +87,7 @@ def _exec_bluetoothctl():
 
     out, err = p2.communicate()
 
-    xbmc.log(out, xbmc.LOGINFO)
-
-    for match in re.finditer('([0-9A-F:]+:AC:E6) (.+)',
+    for match in re.finditer('([0-9A-F:]+:AC:E6|AC:E6:4B:[0-9A-F:]+) (.+)',
                              out.decode("utf-8")):
         macs += [match.group(1)]
         names += [match.group(2)]
@@ -225,7 +223,7 @@ def _add_list_item(entry, path):
         icon_file = None
 
     li = xbmcgui.ListItem(label)
-    li.setArt({"icon": icon_file})
+    li.setArt({"thumb": icon_file})
 
     xbmcplugin.addDirectoryItem(handle=addon_handle,
                                 listitem=li,
@@ -502,8 +500,8 @@ def _build_menu_effects(status):
                     "path": effect,
                     "name": effect,
                     "icon": "icon_%s" % effect,
-                    "node": _build_menu_effects_hold(effect)
-                }
+                    "node": _build_menu_effects_hold(effect) if effect != "candle" else _build_menu_color("--candle")
+                 }
             ]
 
     if status["state"]["effect"]["effect"] != "halt":

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.audio.playbulb" name="Mipow Playbulb Control" version="2.0.0"
+<addon id="plugin.audio.playbulb" name="Mipow Playbulb Control" version="2.0.1"
 	provider-name="Heckie">
 	<extension point="xbmc.python.pluginsource" library="addon.py">
 		<provides>audio</provides>
@@ -15,8 +15,11 @@
 		<website></website>
 		<email></email>
 		<source></source>
-		<news>v2.0.0 (2020-02-20)
-		- Migration to Kodi v19 alias Matrix
+		<news>
+v2.0.1 (2021-12-05)
+- Added 4 more slots so that there are 12 now
+v2.0.0 (2020-02-20)
+- Migration to Kodi v19 alias Matrix
 		</news>
 		<assets>
 			<icon>icon.png</icon>
