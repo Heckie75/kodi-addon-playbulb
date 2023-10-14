@@ -1,0 +1,897 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings version="1">
+    <section id="script.playbulbs">
+        <category id="c_bulbs" label="32001" help="">
+            <group id="g_scan" label="32002">
+                <setting id="scan" type="action" label="32002" help="32003">
+                    <level>0</level>
+                    <data>RunScript($ID,scan)</data>
+                    <control type="button" format="action">
+                        <close>false</close>
+                    </control>
+                </setting>
+            </group>
+            <group id="g_bulb_0" label="32100">
+                <setting id="bulb_0_mac" type="string" label="32011" help="">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32011</heading>
+                    </control>
+                    <enable>false</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_0_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_0_name" type="string" label="32012" help="32013">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32012</heading>
+                    </control>
+                    <enable>true</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_0_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_0_enable" type="boolean" label="32014" help="32015">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_0_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_0_icon" type="string" label="32016" help="32017">
+                    <level>0</level>
+                    <default>bulb</default>
+                    <constraints>
+                        <options>
+                            <option label="32021">bulb</option>
+                            <option label="32022">lamp</option>
+                            <option label="32023">globe</option>
+                            <option label="32024">livingroom</option>
+                            <option label="32025">bedroom</option>
+                            <option label="32026">kitchen</option>
+                            <option label="32027">bathroom</option>
+                            <option label="32028">hall</option>
+                            <option label="32029">candle</option>
+                            <option label="32030">spot</option>
+                        </options>
+                    </constraints>
+                    <control type="spinner" format="string" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_0_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_0_preselect" type="boolean" label="32018" help="32019">
+                    <default>false</default>
+                    <control type="toggle" />
+                    <visible>false</visible>
+                </setting>
+                <setting id="bulb_0_order" type="integer" label="32041" help="32042">
+                    <level>0</level>
+                    <default>1</default>
+                    <constraints>
+                        <minimum>1</minimum>
+                        <step>1</step>
+                        <maximum>10</maximum>
+                    </constraints>
+                    <control type="slider" format="integer">
+                        <popup>false</popup>
+                    </control>
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_0_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+            </group>
+            <group id="g_bulb_1" label="32101">
+                <setting id="bulb_1_mac" type="string" label="32011" help="">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32011</heading>
+                    </control>
+                    <enable>false</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_1_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_1_name" type="string" label="32012" help="32013">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32012</heading>
+                    </control>
+                    <enable>true</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_1_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_1_enable" type="boolean" label="32014" help="32015">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_1_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_1_icon" type="string" label="32016" help="32017">
+                    <level>0</level>
+                    <default>bulb</default>
+                    <constraints>
+                        <options>
+                            <option label="32021">bulb</option>
+                            <option label="32022">lamp</option>
+                            <option label="32023">globe</option>
+                            <option label="32024">livingroom</option>
+                            <option label="32025">bedroom</option>
+                            <option label="32026">kitchen</option>
+                            <option label="32027">bathroom</option>
+                            <option label="32028">hall</option>
+                            <option label="32029">candle</option>
+                            <option label="32030">spot</option>
+                        </options>
+                    </constraints>
+                    <control type="spinner" format="string" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_1_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_1_preselect" type="boolean" label="32018" help="32019">
+                    <default>false</default>
+                    <control type="toggle" />
+                    <visible>false</visible>
+                </setting>
+                <setting id="bulb_1_order" type="integer" label="32041" help="32042">
+                    <level>0</level>
+                    <default>1</default>
+                    <constraints>
+                        <minimum>1</minimum>
+                        <step>1</step>
+                        <maximum>10</maximum>
+                    </constraints>
+                    <control type="slider" format="integer">
+                        <popup>false</popup>
+                    </control>
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_1_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+            </group>
+            <group id="g_bulb_2" label="32102">
+                <setting id="bulb_2_mac" type="string" label="32011" help="">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32011</heading>
+                    </control>
+                    <enable>false</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_2_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_2_name" type="string" label="32012" help="32013">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32012</heading>
+                    </control>
+                    <enable>true</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_2_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_2_enable" type="boolean" label="32014" help="32015">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_2_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_2_icon" type="string" label="32016" help="32017">
+                    <level>0</level>
+                    <default>bulb</default>
+                    <constraints>
+                        <options>
+                            <option label="32021">bulb</option>
+                            <option label="32022">lamp</option>
+                            <option label="32023">globe</option>
+                            <option label="32024">livingroom</option>
+                            <option label="32025">bedroom</option>
+                            <option label="32026">kitchen</option>
+                            <option label="32027">bathroom</option>
+                            <option label="32028">hall</option>
+                            <option label="32029">candle</option>
+                            <option label="32030">spot</option>
+                        </options>
+                    </constraints>
+                    <control type="spinner" format="string" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_2_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_2_preselect" type="boolean" label="32018" help="32019">
+                    <default>false</default>
+                    <control type="toggle" />
+                    <visible>false</visible>
+                </setting>
+                <setting id="bulb_2_order" type="integer" label="32041" help="32042">
+                    <level>0</level>
+                    <default>1</default>
+                    <constraints>
+                        <minimum>1</minimum>
+                        <step>1</step>
+                        <maximum>10</maximum>
+                    </constraints>
+                    <control type="slider" format="integer">
+                        <popup>false</popup>
+                    </control>
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_2_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+            </group>
+            <group id="g_bulb_3" label="32103">
+                <setting id="bulb_3_mac" type="string" label="32011" help="">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32011</heading>
+                    </control>
+                    <enable>false</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_3_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_3_name" type="string" label="32012" help="32013">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32012</heading>
+                    </control>
+                    <enable>true</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_3_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_3_enable" type="boolean" label="32014" help="32015">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_3_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_3_icon" type="string" label="32016" help="32017">
+                    <level>0</level>
+                    <default>bulb</default>
+                    <constraints>
+                        <options>
+                            <option label="32021">bulb</option>
+                            <option label="32022">lamp</option>
+                            <option label="32023">globe</option>
+                            <option label="32024">livingroom</option>
+                            <option label="32025">bedroom</option>
+                            <option label="32026">kitchen</option>
+                            <option label="32027">bathroom</option>
+                            <option label="32028">hall</option>
+                            <option label="32029">candle</option>
+                            <option label="32030">spot</option>
+                        </options>
+                    </constraints>
+                    <control type="spinner" format="string" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_3_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_3_preselect" type="boolean" label="32018" help="32019">
+                    <default>false</default>
+                    <control type="toggle" />
+                    <visible>false</visible>
+                </setting>
+                <setting id="bulb_3_order" type="integer" label="32041" help="32042">
+                    <level>0</level>
+                    <default>1</default>
+                    <constraints>
+                        <minimum>1</minimum>
+                        <step>1</step>
+                        <maximum>10</maximum>
+                    </constraints>
+                    <control type="slider" format="integer">
+                        <popup>false</popup>
+                    </control>
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_3_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+            </group>
+            <group id="g_bulb_4" label="32104">
+                <setting id="bulb_4_mac" type="string" label="32011" help="">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32011</heading>
+                    </control>
+                    <enable>false</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_4_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_4_name" type="string" label="32012" help="32013">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32012</heading>
+                    </control>
+                    <enable>true</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_4_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_4_enable" type="boolean" label="32014" help="32015">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_4_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_4_icon" type="string" label="32016" help="32017">
+                    <level>0</level>
+                    <default>bulb</default>
+                    <constraints>
+                        <options>
+                            <option label="32021">bulb</option>
+                            <option label="32022">lamp</option>
+                            <option label="32023">globe</option>
+                            <option label="32024">livingroom</option>
+                            <option label="32025">bedroom</option>
+                            <option label="32026">kitchen</option>
+                            <option label="32027">bathroom</option>
+                            <option label="32028">hall</option>
+                            <option label="32029">candle</option>
+                            <option label="32030">spot</option>
+                        </options>
+                    </constraints>
+                    <control type="spinner" format="string" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_4_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_4_preselect" type="boolean" label="32018" help="32019">
+                    <default>false</default>
+                    <control type="toggle" />
+                    <visible>false</visible>
+                </setting>
+                <setting id="bulb_4_order" type="integer" label="32041" help="32042">
+                    <level>0</level>
+                    <default>1</default>
+                    <constraints>
+                        <minimum>1</minimum>
+                        <step>1</step>
+                        <maximum>10</maximum>
+                    </constraints>
+                    <control type="slider" format="integer">
+                        <popup>false</popup>
+                    </control>
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_4_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+            </group>
+            <group id="g_bulb_5" label="32105">
+                <setting id="bulb_5_mac" type="string" label="32011" help="">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32011</heading>
+                    </control>
+                    <enable>false</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_5_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_5_name" type="string" label="32012" help="32013">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32012</heading>
+                    </control>
+                    <enable>true</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_5_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_5_enable" type="boolean" label="32014" help="32015">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_5_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_5_icon" type="string" label="32016" help="32017">
+                    <level>0</level>
+                    <default>bulb</default>
+                    <constraints>
+                        <options>
+                            <option label="32021">bulb</option>
+                            <option label="32022">lamp</option>
+                            <option label="32023">globe</option>
+                            <option label="32024">livingroom</option>
+                            <option label="32025">bedroom</option>
+                            <option label="32026">kitchen</option>
+                            <option label="32027">bathroom</option>
+                            <option label="32028">hall</option>
+                            <option label="32029">candle</option>
+                            <option label="32030">spot</option>
+                        </options>
+                    </constraints>
+                    <control type="spinner" format="string" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_5_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_5_preselect" type="boolean" label="32018" help="32019">
+                    <default>false</default>
+                    <control type="toggle" />
+                    <visible>false</visible>
+                </setting>
+                <setting id="bulb_5_order" type="integer" label="32041" help="32042">
+                    <level>0</level>
+                    <default>1</default>
+                    <constraints>
+                        <minimum>1</minimum>
+                        <step>1</step>
+                        <maximum>10</maximum>
+                    </constraints>
+                    <control type="slider" format="integer">
+                        <popup>false</popup>
+                    </control>
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_5_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+            </group>
+            <group id="g_bulb_6" label="32106">
+                <setting id="bulb_6_mac" type="string" label="32011" help="">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32011</heading>
+                    </control>
+                    <enable>false</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_6_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_6_name" type="string" label="32012" help="32013">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32012</heading>
+                    </control>
+                    <enable>true</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_6_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_6_enable" type="boolean" label="32014" help="32015">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_6_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_6_icon" type="string" label="32016" help="32017">
+                    <level>0</level>
+                    <default>bulb</default>
+                    <constraints>
+                        <options>
+                            <option label="32021">bulb</option>
+                            <option label="32022">lamp</option>
+                            <option label="32023">globe</option>
+                            <option label="32024">livingroom</option>
+                            <option label="32025">bedroom</option>
+                            <option label="32026">kitchen</option>
+                            <option label="32027">bathroom</option>
+                            <option label="32028">hall</option>
+                            <option label="32029">candle</option>
+                            <option label="32030">spot</option>
+                        </options>
+                    </constraints>
+                    <control type="spinner" format="string" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_6_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_6_preselect" type="boolean" label="32018" help="32019">
+                    <default>false</default>
+                    <control type="toggle" />
+                    <visible>false</visible>
+                </setting>
+                <setting id="bulb_6_order" type="integer" label="32041" help="32042">
+                    <level>0</level>
+                    <default>1</default>
+                    <constraints>
+                        <minimum>1</minimum>
+                        <step>1</step>
+                        <maximum>10</maximum>
+                    </constraints>
+                    <control type="slider" format="integer">
+                        <popup>false</popup>
+                    </control>
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_6_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+            </group>
+            <group id="g_bulb_7" label="32107">
+                <setting id="bulb_7_mac" type="string" label="32011" help="">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32011</heading>
+                    </control>
+                    <enable>false</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_7_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_7_name" type="string" label="32012" help="32013">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32012</heading>
+                    </control>
+                    <enable>true</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_7_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_7_enable" type="boolean" label="32014" help="32015">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_7_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_7_icon" type="string" label="32016" help="32017">
+                    <level>0</level>
+                    <default>bulb</default>
+                    <constraints>
+                        <options>
+                            <option label="32021">bulb</option>
+                            <option label="32022">lamp</option>
+                            <option label="32023">globe</option>
+                            <option label="32024">livingroom</option>
+                            <option label="32025">bedroom</option>
+                            <option label="32026">kitchen</option>
+                            <option label="32027">bathroom</option>
+                            <option label="32028">hall</option>
+                            <option label="32029">candle</option>
+                            <option label="32030">spot</option>
+                        </options>
+                    </constraints>
+                    <control type="spinner" format="string" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_7_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_7_preselect" type="boolean" label="32018" help="32019">
+                    <default>false</default>
+                    <control type="toggle" />
+                    <visible>false</visible>
+                </setting>
+                <setting id="bulb_7_order" type="integer" label="32041" help="32042">
+                    <level>0</level>
+                    <default>1</default>
+                    <constraints>
+                        <minimum>1</minimum>
+                        <step>1</step>
+                        <maximum>10</maximum>
+                    </constraints>
+                    <control type="slider" format="integer">
+                        <popup>false</popup>
+                    </control>
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_7_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+            </group>
+            <group id="g_bulb_8" label="32108">
+                <setting id="bulb_8_mac" type="string" label="32011" help="">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32011</heading>
+                    </control>
+                    <enable>false</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_8_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_8_name" type="string" label="32012" help="32013">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32012</heading>
+                    </control>
+                    <enable>true</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_8_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_8_enable" type="boolean" label="32014" help="32015">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_8_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_8_icon" type="string" label="32016" help="32017">
+                    <level>0</level>
+                    <default>bulb</default>
+                    <constraints>
+                        <options>
+                            <option label="32021">bulb</option>
+                            <option label="32022">lamp</option>
+                            <option label="32023">globe</option>
+                            <option label="32024">livingroom</option>
+                            <option label="32025">bedroom</option>
+                            <option label="32026">kitchen</option>
+                            <option label="32027">bathroom</option>
+                            <option label="32028">hall</option>
+                            <option label="32029">candle</option>
+                            <option label="32030">spot</option>
+                        </options>
+                    </constraints>
+                    <control type="spinner" format="string" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_8_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_8_preselect" type="boolean" label="32018" help="32019">
+                    <default>false</default>
+                    <control type="toggle" />
+                    <visible>false</visible>
+                </setting>
+                <setting id="bulb_8_order" type="integer" label="32041" help="32042">
+                    <level>0</level>
+                    <default>1</default>
+                    <constraints>
+                        <minimum>1</minimum>
+                        <step>1</step>
+                        <maximum>10</maximum>
+                    </constraints>
+                    <control type="slider" format="integer">
+                        <popup>false</popup>
+                    </control>
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_8_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+            </group>
+            <group id="g_bulb_9" label="32109">
+                <setting id="bulb_9_mac" type="string" label="32011" help="">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32011</heading>
+                    </control>
+                    <enable>false</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_9_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_9_name" type="string" label="32012" help="32013">
+                    <level>0</level>
+                    <default />
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32012</heading>
+                    </control>
+                    <enable>true</enable>
+                    <dependencies>
+                        <dependency type="visible">
+                            <and>
+                                <condition setting="bulb_9_mac" operator="!is"></condition>
+                            </and>
+                        </dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_9_enable" type="boolean" label="32014" help="32015">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_9_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_9_icon" type="string" label="32016" help="32017">
+                    <level>0</level>
+                    <default>bulb</default>
+                    <constraints>
+                        <options>
+                            <option label="32021">bulb</option>
+                            <option label="32022">lamp</option>
+                            <option label="32023">globe</option>
+                            <option label="32024">livingroom</option>
+                            <option label="32025">bedroom</option>
+                            <option label="32026">kitchen</option>
+                            <option label="32027">bathroom</option>
+                            <option label="32028">hall</option>
+                            <option label="32029">candle</option>
+                            <option label="32030">spot</option>
+                        </options>
+                    </constraints>
+                    <control type="spinner" format="string" />
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_9_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+                <setting id="bulb_9_preselect" type="boolean" label="32018" help="32019">
+                    <default>false</default>
+                    <control type="toggle" />
+                    <visible>false</visible>
+                </setting>
+                <setting id="bulb_9_order" type="integer" label="32041" help="32042">
+                    <level>0</level>
+                    <default>1</default>
+                    <constraints>
+                        <minimum>1</minimum>
+                        <step>1</step>
+                        <maximum>10</maximum>
+                    </constraints>
+                    <control type="slider" format="integer">
+                        <popup>false</popup>
+                    </control>
+                    <dependencies>
+                        <dependency type="visible" setting="bulb_9_mac" operator="!is"></dependency>
+                    </dependencies>
+                </setting>
+            </group>
+        </category>
+    </section>
+</settings>
+  

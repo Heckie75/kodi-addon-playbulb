@@ -1,0 +1,450 @@
+# Kodi Media Center language file
+msgid ""
+msgstr ""
+"Project-Id-Version: Kodi Addons\n"
+"Report-Msgid-Bugs-To: alanwww1@kodi.org\n"
+"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Kodi Translation Team\n"
+"Language-Team: English (http://www.transifex.com/projects/p/xbmc-addons/language/en/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgctxt "#32001"
+msgid "Mipow Playbulbs"
+msgstr ""
+
+msgctxt "#32002"
+msgid "scan for Playbulbs"
+msgstr ""
+
+msgctxt "#32003"
+msgid "Start scanning for Playbulbs in your area. Make sure that all bulbs are turned on!"
+msgstr ""
+
+msgctxt "#32004"
+msgid "%i bluetooth devices seen"
+msgstr ""
+
+msgctxt "#32005"
+msgid "%i playbulbs found."
+msgstr ""
+
+msgctxt "#32006"
+msgid "Select playbulbs"
+msgstr ""
+
+msgctxt "#32007"
+msgid "No playbulbs found."
+msgstr ""
+
+msgctxt "#32011"
+msgid "MAC address"
+msgstr ""
+
+msgctxt "#32012"
+msgid "Devicename"
+msgstr ""
+
+msgctxt "#32013"
+msgid "Here you can give your bulb a name"
+msgstr ""
+
+msgctxt "#32014"
+msgid "display / hide"
+msgstr ""
+
+msgctxt "#32015"
+msgid "Here you can display or hide this bulb from the menu"
+msgstr ""
+
+msgctxt "#32016"
+msgid "Icon"
+msgstr ""
+
+msgctxt "#32017"
+msgid "Here you can set the icon that is displayed in menu"
+msgstr ""
+
+msgctxt "#32018"
+msgid "Preselect bulb"
+msgstr ""
+
+msgctxt "#32019"
+msgid "If enabled then this bulb is always pre-selected in dialog"
+msgstr ""
+
+msgctxt "#32021"
+msgid "Bulb"
+msgstr ""
+
+msgctxt "#32022"
+msgid "Lamp"
+msgstr ""
+
+msgctxt "#32023"
+msgid "Globe"
+msgstr ""
+
+msgctxt "#32024"
+msgid "Livingroom"
+msgstr ""
+
+msgctxt "#32025"
+msgid "Bedroom"
+msgstr ""
+
+msgctxt "#32026"
+msgid "Kitchen"
+msgstr ""
+
+msgctxt "#32027"
+msgid "Bathroom"
+msgstr ""
+
+msgctxt "#32028"
+msgid "Hall"
+msgstr ""
+
+msgctxt "#32029"
+msgid "Candle"
+msgstr ""
+
+msgctxt "#32030"
+msgid "Spotlight"
+msgstr ""
+
+msgctxt "#32041"
+msgid "Order"
+msgstr ""
+
+msgctxt "#32042"
+msgid "Sets the position in selection dialog"
+msgstr ""
+
+msgctxt "#32051"
+msgid "Turn security mode off"
+msgstr ""
+
+msgctxt "#32052"
+msgid "Security mode is running from %s until %s"
+msgstr ""
+
+msgctxt "#32053"
+msgid "Turn light off"
+msgstr ""
+
+msgctxt "#32054"
+msgid "Light: "
+msgstr ""
+
+msgctxt "#32055"
+msgid "kind of "
+msgstr ""
+
+msgctxt "#32056"
+msgid "Turn light on"
+msgstr ""
+
+msgctxt "#32057"
+msgid "Toggle light"
+msgstr ""
+
+msgctxt "#32058"
+msgid "Turn up light"
+msgstr ""
+
+msgctxt "#32059"
+msgid "Dim light"
+msgstr ""
+
+msgctxt "#32060"
+msgid "Set light..."
+msgstr ""
+
+msgctxt "#32061"
+msgid "Turn effect off"
+msgstr ""
+
+msgctxt "#32062"
+msgid "Effect: %s, "
+msgstr ""
+
+msgctxt "#32063"
+msgid "Halt current effect, keep light"
+msgstr ""
+
+msgctxt "#32064"
+msgid "Run effect..."
+msgstr ""
+
+msgctxt "#32065"
+msgid "Program bulbs..."
+msgstr ""
+
+msgctxt "#32066"
+msgid "Enter color code"
+msgstr ""
+
+msgctxt "#32067"
+msgid "Select color"
+msgstr ""
+
+msgctxt "#32068"
+msgid "Enter runtime in seconds (max. 255)"
+msgstr ""
+
+msgctxt "#32069"
+msgid "Enter hold value in 1/100s (max. 255)"
+msgstr ""
+
+msgctxt "#32070"
+msgid "Enter time in 1/100s (max. 255)"
+msgstr ""
+
+msgctxt "#32071"
+msgid "Enter repetitions (max. 255)"
+msgstr ""
+
+msgctxt "#32072"
+msgid "Enter pause in 1/10s (max. 255)"
+msgstr ""
+
+msgctxt "#32073"
+msgid "Enter hold value in milliseconds (max. 255)"
+msgstr ""
+
+msgctxt "#32074"
+msgid "Run another scene..."
+msgstr ""
+
+msgctxt "#32075"
+msgid "Run scene..."
+msgstr ""
+
+msgctxt "#32076"
+msgid "Ambient scene"
+msgstr ""
+
+msgctxt "#32077"
+msgid "Change light to ambient, keep it and fade out after period is over"
+msgstr ""
+
+msgctxt "#32078"
+msgid "Wakeup scene"
+msgstr ""
+
+msgctxt "#32079"
+msgid "Fade in using blue colors, smoothly change to white, keep until end of period"
+msgstr ""
+
+msgctxt "#32080"
+msgid "Doze scene"
+msgstr ""
+
+msgctxt "#32081"
+msgid "smoothly fade out from current color to ambient light and  and fade out after period is over"
+msgstr ""
+
+msgctxt "#32082"
+msgid "Light-wheel scene"
+msgstr ""
+
+msgctxt "#32083"
+msgid "Smoothly change from color to color in a long term"
+msgstr ""
+
+msgctxt "#32084"
+msgid "turn"
+msgstr ""
+
+msgctxt "#32085"
+msgid "Set runtime"
+msgstr ""
+
+msgctxt "#32086"
+msgid "Set starting time"
+msgstr ""
+
+msgctxt "#32087"
+msgid "Select program"
+msgstr ""
+
+msgctxt "#32088"
+msgid "blue > green > red"
+msgstr ""
+
+msgctxt "#32089"
+msgid "green > red > blue"
+msgstr ""
+
+msgctxt "#32090"
+msgid "red > green > blue"
+msgstr ""
+
+msgctxt "#32091"
+msgid "Brightness (max. 255)"
+msgstr ""
+
+msgctxt "#32092"
+msgid "Synchronization failed. Do you want to retry?"
+msgstr ""
+
+msgctxt "#32093"
+msgid "Set security mode"
+msgstr ""
+
+msgctxt "#32094"
+msgid "Set ending time"
+msgstr ""
+
+msgctxt "#32095"
+msgid "Shortest circuit time (max. 255 min.)"
+msgstr ""
+
+msgctxt "#32096"
+msgid "Longest circuit time (max. 255 min.)"
+msgstr ""
+
+msgctxt "#32100"
+msgid "Playbulb 1"
+msgstr ""
+
+msgctxt "#32101"
+msgid "Playbulb 2"
+msgstr ""
+
+msgctxt "#32102"
+msgid "Playbulb 3"
+msgstr ""
+
+msgctxt "#32103"
+msgid "Playbulb 4"
+msgstr ""
+
+msgctxt "#32104"
+msgid "Playbulb 5"
+msgstr ""
+
+msgctxt "#32105"
+msgid "Playbulb 6"
+msgstr ""
+
+msgctxt "#32106"
+msgid "Playbulb 7"
+msgstr ""
+
+msgctxt "#32107"
+msgid "Playbulb 8"
+msgstr ""
+
+msgctxt "#32108"
+msgid "Playbulb 9"
+msgstr ""
+
+msgctxt "#32109"
+msgid "Playbulb 10"
+msgstr ""
+
+msgctxt "#32121"
+msgid "off"
+msgstr ""
+
+msgctxt "#32122"
+msgid "blue"
+msgstr ""
+
+msgctxt "#32123"
+msgid "green"
+msgstr ""
+
+msgctxt "#32124"
+msgid "cyan"
+msgstr ""
+
+msgctxt "#32125"
+msgid "red"
+msgstr ""
+
+msgctxt "#32126"
+msgid "magenta"
+msgstr ""
+
+msgctxt "#32127"
+msgid "yellow"
+msgstr ""
+
+msgctxt "#32128"
+msgid "white"
+msgstr ""
+
+msgctxt "#32129"
+msgid "on"
+msgstr ""
+
+msgctxt "#32130"
+msgid "ambient"
+msgstr ""
+
+msgctxt "#32131"
+msgid "greenly"
+msgstr ""
+
+msgctxt "#32132"
+msgid "mint"
+msgstr ""
+
+msgctxt "#32133"
+msgid "violet"
+msgstr ""
+
+msgctxt "#32134"
+msgid "Rainbow"
+msgstr ""
+
+msgctxt "#32135"
+msgid "Candle"
+msgstr ""
+
+msgctxt "#32136"
+msgid "Disco"
+msgstr ""
+
+msgctxt "#32137"
+msgid "Blink"
+msgstr ""
+
+msgctxt "#32138"
+msgid "Pulse"
+msgstr ""
+
+msgctxt "#32139"
+msgid "Halt"
+msgstr ""
+
+msgctxt "#32140"
+msgid "smoothly change colors"
+msgstr ""
+
+msgctxt "#32141"
+msgid "flickering candle"
+msgstr ""
+
+msgctxt "#32142"
+msgid "abrupt change colors"
+msgstr ""
+
+msgctxt "#32143"
+msgid "blink a single color"
+msgstr ""
+
+msgctxt "#32144"
+msgid "pulse a single color"
+msgstr ""
+
+msgctxt "#32145"
+msgid "Stop effect and keep color"
+msgstr ""
